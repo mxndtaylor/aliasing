@@ -16,3 +16,9 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.pdm.build]
+excludes = ['**/example.py']
+
+[tool.pdm.scripts]
+examples = "python -m py_aliasing.example"
