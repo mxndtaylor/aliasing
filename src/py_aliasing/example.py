@@ -23,10 +23,16 @@ class Example:
 
 if __name__ == "__main__":
     example = Example()
-    assert example.my == 123
-    assert example.my_alias == 123
-    assert example.my_aliased == 123
-    assert example.my_second_alias == 123
-    assert example.method() == 'my method call'
-    assert example.method_alias1() == 'my method call'
-    assert example.method_alias2() == 'my method call'
+    # all of these are 123
+    print(example.my)
+    print(example.my_alias)
+    print(example.my_aliased)
+    print(example.my_second_alias)
+
+    # all of these are 'my method call'
+    print(example.method())
+    print(example.method_alias1())
+    print(example.method_alias2())
+
+    # includes method, method_alias1, method_alias2, my, my_alias, my_aliased, my_second_alias
+    print(dir(example))
