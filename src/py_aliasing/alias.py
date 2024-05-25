@@ -61,7 +61,6 @@ class aliased:
         self.__doc__ = self._doc
 
     def __set_name__(self, owner, name: str):
-        print(self, '__set_name__', owner, name)
         self._name = name
         self._private_name = f"_aliased_{self._name}"
         func = self._func
@@ -69,7 +68,6 @@ class aliased:
         setattr(owner, self._private_name, func)
 
     def __get__(self, owner, owner_type=None):
-        print(self, '__get__', owner, owner_type)
         self._refresh_doc()
         if owner is None:
             return self
