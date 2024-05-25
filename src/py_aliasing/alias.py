@@ -22,19 +22,19 @@ class alias:
         return value
 
     def attach(self, owner, name: str | None = None):
-        self._name = name or self._name
-        if not self._name:
+        name = name or self._name
+        if not name:
             raise RuntimeError("must provide name to attach alias")
         cls = owner
         if type(cls) is not type:
             # we have to attach the descriptor to the class, not the instance
             # this way we support both
             cls = type(cls)
-        setattr(cls, owner, self._name)
+        setattr(cls, name, self)
         # needs to happen after setattr as that's when it happens in the
         # typical descriptor workflow. In this class, the statement has
         # no effect, but child classes might add functionality to __set_name__
-        self.__set_name__(owner, self._name)
+        self.__set_name__(owner, name)
 
 
 class aliased:
