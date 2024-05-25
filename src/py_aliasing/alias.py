@@ -21,6 +21,9 @@ class alias:
         #     value = value.__get__(owner, owner_type)
         return value
 
+    def __set__(self, owner, value):
+        raise ValueError(f"cannot set the value of read-only alias {self._name}")
+
     def attach(self, owner, name: str | None = None):
         name = name or self._name
         if not name:
