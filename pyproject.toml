@@ -22,6 +22,7 @@ excludes = ['**/example.py']
 
 [tool.pdm.scripts]
 examples = "python -m py_aliasing.example"
+test = "pytest"
 
 [tool.pdm.dev-dependencies]
 dev = [
