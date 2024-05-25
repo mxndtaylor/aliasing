@@ -22,7 +22,7 @@ class alias:
         return value
 
     def __set__(self, owner, value):
-        raise ValueError(f"cannot set the value of read-only alias {self._name}")
+        raise NotImplementedError(f"cannot set the value of read-only alias {self._name}")
 
     def attach(self, owner, name: str | None = None):
         name = name or self._name

@@ -24,7 +24,7 @@ def test_alias_get_prop():
 
 def test_alias_set_prop():
     alias_test = AliasTest()
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(NotImplementedError) as exc_info:
         alias_test.my_alias = ""
 
     assert exc_info.value.args[0] == "cannot set the value of read-only alias my_alias"
