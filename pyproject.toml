@@ -22,3 +22,9 @@ excludes = ['**/example.py']
 
 [tool.pdm.scripts]
 examples = "python -m py_aliasing.example"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest>=8.2.1",
+    "black>=24.4.2",
+]
