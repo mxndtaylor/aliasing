@@ -14,6 +14,8 @@ class alias:
     def __get__(self, owner, owner_type=None):
         if owner is None:
             # this happens when called from class level
+            if hasattr(owner_type, self._for):
+                return getattr(owner_type, self._for)
             return self
         # just return the aliased attribute
         value = getattr(owner, self._for)
@@ -73,6 +75,8 @@ class aliased:
     def __get__(self, owner, owner_type=None):
         self._refresh_doc()
         if owner is None:
+            if hasattr(owner_type, self._private_name):
+                return getattr(owner_type, self._private_name)
             return self
 
         func = getattr(owner, self._private_name)
