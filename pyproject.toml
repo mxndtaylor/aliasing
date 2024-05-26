@@ -32,3 +32,9 @@ dev = [
     "black>=24.4.2",
     "coverage>=7.5.1",
 ]
+
+[tool.coverage.run]
+omit = [
+    "tests/**",
+    "*test*"
+]
