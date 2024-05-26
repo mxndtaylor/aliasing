@@ -18,13 +18,13 @@ build-backend = "pdm.backend"
 distribution = true
 
 [tool.pdm.build]
-excludes = ['**/example.py']
-source-includes = ["tests/*"]
+excludes = ["**/example.py", "tests/*"]
 
 [tool.pdm.scripts]
 examples = "python -m py_aliasing.example"
 test = "pytest"
 coverage = {composite=["python -m coverage run -m pytest", "python -m coverage html"]}
+fmt = "black"
 
 [tool.pdm.dev-dependencies]
 dev = [
