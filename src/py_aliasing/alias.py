@@ -51,13 +51,13 @@ class aliased:
         self._init_doc = func.__doc__
 
         self._private_name = f"_aliased_{self._name}"
-        self._aliases = [self._name]
+        self._aliases: list[alias] = []
         self._doc_sep = '\n'
         self._doc = self._init_doc
         self._refresh_doc()
 
     def _refresh_doc(self):
-        alias_list = ",".join(self._aliases)
+        alias_list = ",".join(filter(None, map(lambda a: getattr(a, "_name", None), self._aliases)))
         aliases_prefix = f"(aliases {alias_list})" if self._aliases else ""
         # renders a docstring like "(aliases method1,method2)\n<your original doc string here"
         self._doc = self._doc_sep.join(filter(None, [aliases_prefix, self._init_doc]))
@@ -100,4 +100,6 @@ class aliased:
             raise RuntimeError(f"could not resolve alias name from non-None, non-str member {member}"
                                f" without `__name__` attribute")
 
-        return alias(alias_for=self._name, alias_name=name)
+        new_alias = alias(alias_for=self._name, alias_name=name)
+        self._aliases.append(new_alias)
+        return new_alias
