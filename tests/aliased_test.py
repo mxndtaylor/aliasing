@@ -56,9 +56,30 @@ class AliasedTester:
     @AliasedInnerClass.alias
     def cls_method_class_alias(cls): ...
 
-    @staticmethod
+    # staticmethod breaks descriptors when placed after,
+    # so it must be applied before
     @AliasedInnerClass.alias
+    @staticmethod
     def static_method_class_alias(): ...
+
+    @aliased
+    @staticmethod
+    def aliased_static_method():
+        return "my static method"
+
+    @aliased_static_method.alias
+    @staticmethod
+    def aliased_static_method_alias(): ...
+
+    # similarly to staticmethod breaking it, classmethod breaks the aliased.alias method
+    @aliased
+    @classmethod
+    def aliased_class_method(cls):
+        return "my class method"
+
+    @aliased_class_method.alias
+    @classmethod
+    def aliased_class_method_alias(cls): ...
 
 
 class TestAliased:
@@ -142,3 +163,11 @@ class TestAliased:
         assert isinstance(cls.tester_cls.method_class_alias(val), cls.tester_cls.AliasedInnerClass)
         assert isinstance(cls.tester_cls.cls_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
         assert isinstance(cls.tester_cls.static_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
+
+    @classmethod
+    def test_aliased_class_methods(cls):
+        assert cls.tester_cls.aliased_class_method() == cls.tester_cls.aliased_class_method_alias()
+
+    @classmethod
+    def test_aliased_static_methods(cls):
+        assert cls.tester_cls.aliased_static_method() == cls.tester_cls.aliased_static_method_alias()
