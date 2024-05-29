@@ -61,61 +61,61 @@ class AliasedTester:
     def static_method_class_alias(): ...
 
 
-class TestAliased(AliasedTester):
+class TestAliased:
+    tester_cls = AliasedTester
+    tester = tester_cls()
+
     def test_prop_alias(self):
-        assert self.prop_alias == self.prop
+        assert self.tester.prop_alias == self.tester.prop
 
     def test_second_prop_alias(self):
-        assert self.second_prop_alias == self.prop
+        assert self.tester.second_prop_alias == self.tester.prop
 
     def test_prop_pascal_case(self):
-        assert self.PropPascalCase == self.prop
-
-    def test_prop_doc(self):
-        assert self.prop_alias.__doc__ == f"Alias for {PROP_NAME}"
-        assert self.second_prop_alias.__doc__ == f"Alias for {PROP_NAME}"
-        assert self.PropPascalCase.__doc__ == f"Alias for {PROP_NAME}"
+        assert self.tester.PropPascalCase == self.tester.prop
 
     @classmethod
-    def test_prop_alias_doc(cls):
-        assert cls.prop_alias.__doc__.startswith("(aliases ")
+    def test_prop_doc(cls):
+        assert cls.tester_cls.prop_alias.__doc__ == f"Alias for {PROP_NAME}"
+        assert cls.tester_cls.second_prop_alias.__doc__ == f"Alias for {PROP_NAME}"
+        assert cls.tester_cls.PropPascalCase.__doc__ == f"Alias for {PROP_NAME}"
 
     def test_aliased_method(self):
-        assert self.aliased_method() == self.aliased_val
+        assert self.tester.aliased_method() == self.tester.aliased_val
 
     def test_aliased_method_alias(self):
-        assert self.normal_alias() == self.aliased_val
+        assert self.tester.normal_alias() == self.tester.aliased_val
 
     def test_method_pascal_case(self):
-        assert self.PascalCaseMethod() == self.aliased_val
+        assert self.tester.PascalCaseMethod() == self.tester.aliased_val
 
     def test_nested_alias(self):
-        assert self.nested_alias() == self.aliased_val
+        assert self.tester.nested_alias() == self.tester.aliased_val
 
     def test_alias_of_nested_alias(self):
-        assert self.alias_of_nested_alias() == self.aliased_val
+        assert self.tester.alias_of_nested_alias() == self.tester.aliased_val
 
     @classmethod
     def test_aliased_class(cls):
-        inner_class = cls.AliasedInnerClass("test_val")
-        assert type(cls.AliasedInnerClass) is type
+        inner_class = cls.tester_cls.AliasedInnerClass("test_val")
+        assert type(cls.tester_cls.AliasedInnerClass) is type
         assert inner_class.prop == "test_val"
 
     @classmethod
     def test_aliased_class_alias(cls):
         val = "my val"
-        original = cls.AliasedInnerClass(val)
-        aliased_instance = cls.NormalClassAlias(val)
+        original = cls.tester_cls.AliasedInnerClass(val)
+        aliased_instance = cls.tester_cls.NormalClassAlias(val)
         assert original == aliased_instance
-        assert isinstance(original, cls.AliasedInnerClass)
-        assert isinstance(original, cls.NormalClassAlias)
-        assert isinstance(aliased_instance, cls.AliasedInnerClass)
-        assert isinstance(aliased_instance, cls.NormalClassAlias)
+        assert isinstance(original, cls.tester_cls.AliasedInnerClass)
+        assert isinstance(original, cls.tester_cls.NormalClassAlias)
+        assert isinstance(aliased_instance, cls.tester_cls.AliasedInnerClass)
+        assert isinstance(aliased_instance, cls.tester_cls.NormalClassAlias)
 
     @classmethod
     def test_snake_case_class_alias(cls):
         val = "my val"
-        assert isinstance(cls().snake_case_class_alias(val), cls.AliasedInnerClass)
-        assert isinstance(cls.method_class_alias(val), cls.AliasedInnerClass)
-        assert isinstance(cls.cls_method_class_alias(val), cls.AliasedInnerClass)
-        assert isinstance(cls.static_method_class_alias(val), cls.AliasedInnerClass)
+        assert isinstance(cls().tester_cls.snake_case_class_alias(val), cls.tester_cls.AliasedInnerClass)
+        assert isinstance(cls.tester_cls.method_class_alias(val), cls.tester_cls.AliasedInnerClass)
+        assert isinstance(cls.tester_cls.cls_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
+        assert isinstance(cls.tester_cls.static_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
