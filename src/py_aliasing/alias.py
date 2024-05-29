@@ -140,9 +140,10 @@ class aliased:
     def __get__(self, owner, owner_type=None):
         self._refresh_doc()
         if owner is None:
-            if hasattr(owner_type, self._private_name):
+            try:
                 return getattr(owner_type, self._private_name)
-            return self
+            except AttributeError:
+                return self
 
         func = getattr(owner, self._private_name)
 
