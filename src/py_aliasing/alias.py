@@ -5,11 +5,12 @@ from .error import CircularAliasError
 
 
 class alias:
-    def __init__(self, alias_for: str, alias_name: str | None = None):
+    def __init__(self, alias_for: str, alias_name: str | None = None, *, _aliased: 'aliased' = None):
         self._for = alias_for
         # optionally provide the name here in case you want to init it without a containing class
         self._name = alias_name
         self.__doc__ = f"Alias for {self._for}"
+        self._aliased = _aliased
 
     def __set_name__(self, owner, name):
         self._name = name
@@ -86,16 +87,35 @@ class alias:
 
 class aliased:
     def __init__(self, func):
-        if isinstance(func, alias):
-            name = func._for
-        else:
-            name = func.__name__
         self._func = func
+        self._aliases: list[alias] = []
+        self._original: aliased = self
+
+        name = ""
+
+        if isinstance(func, alias):
+            aliased_: aliased | None = getattr(func, '_aliased', None)
+            if isinstance(aliased_, aliased):
+                self._original: aliased = aliased_._original
+            else:
+                name = getattr(func, '_for')
+        elif isinstance(func, aliased):
+            self._original: aliased = func
+
+        if self._original is not self:
+            self._func = getattr(self._original, '_func')
+            self._init_doc = getattr(self._original, '_init_doc')
+            self._aliases = getattr(self._original, '_aliases')
+            name = self._original._name
+        elif not name:
+            name = func.__name__
+
         self._name = name
         self._init_doc = func.__doc__
 
-        self._private_name = f"_aliased_{self._name}"
-        self._aliases: list[alias] = []
+        self._private_name = ""
+        self._refresh_name()
+
         self._doc_sep = '\n'
         self._doc = self._init_doc
         self._refresh_doc()
@@ -107,9 +127,12 @@ class aliased:
         self._doc = self._doc_sep.join(filter(None, [aliases_prefix, self._init_doc]))
         self.__doc__ = self._doc
 
-    def __set_name__(self, owner, name: str):
-        self._name = name
+    def _refresh_name(self, name: str | None = None):
+        self._name = name or self._name
         self._private_name = f"_aliased_{self._name}"
+
+    def __set_name__(self, owner, name: str):
+        self._refresh_name(name)
         func = self._func
         self._init_doc = func.__doc__
         setattr(owner, self._private_name, func)
@@ -134,7 +157,7 @@ class aliased:
         return func
 
     def alias(self, member: any = None) -> alias:
-        name: str | None = None
+        name: str | None
         if member is not None and hasattr(member, '__name__'):
             name = member.__name__
         elif member is not None and isinstance(member, str):
@@ -146,6 +169,6 @@ class aliased:
             raise RuntimeError(f"could not resolve alias name from non-None, non-str member {member}"
                                f" without `__name__` attribute")
 
-        new_alias = alias(alias_for=self._name, alias_name=name)
+        new_alias = alias(alias_for=self._original._name, alias_name=name, _aliased=self._original)
         self._aliases.append(new_alias)
         return new_alias
