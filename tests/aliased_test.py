@@ -4,9 +4,11 @@ PROP_NAME = "prop"
 
 
 class AliasedTester:
-    prop = "anything at all"
-    aliased_val = "wah wah"
     prop_alias = aliased(alias(PROP_NAME))
+
+    def __init__(self):
+        self.prop = "anything at all"
+        self.aliased_val = "wah wah"
 
     @prop_alias.alias
     def second_prop_alias(self): ...
