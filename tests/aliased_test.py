@@ -89,6 +89,29 @@ class TestAliased:
     def test_method_pascal_case(self):
         assert self.tester.PascalCaseMethod() == self.tester.aliased_val
 
+    def test_aliased_method_doc(self):
+        alias_delimiter = ','
+
+        alias_names = [
+            "PascalCaseMethod",
+            "normal_alias",
+            "nested_alias",
+            # having this last one here ensures nested aliases are working
+            "alias_of_nested_alias",
+        ]
+        start = "(aliases "
+        end = ")"
+        doc = self.tester.aliased_method.__doc__
+        assert doc[:len(start)] == start
+
+        end_index = doc.find(end, len(start))
+        assert end_index > len(start)
+
+        middle = doc[len(start):end_index]
+        parsed_names = middle.split(alias_delimiter)
+        assert (len(parsed_names) == len(alias_names)
+                and set(parsed_names) & set(alias_names) == set(alias_names))
+
     def test_nested_alias(self):
         assert self.tester.nested_alias() == self.tester.aliased_val
 
