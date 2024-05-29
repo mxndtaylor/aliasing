@@ -1,4 +1,7 @@
-from functools import wraps, partial
+from functools import wraps
+from typing import Optional
+
+from .error import CircularAliasError
 
 
 class alias:
@@ -11,16 +14,54 @@ class alias:
     def __set_name__(self, owner, name):
         self._name = name
 
+    @staticmethod
+    def _get_alias_obj(owner, owner_type, name) -> Optional['alias']:
+        if (owner_type
+                and hasattr(owner_type, "__dict__")
+                and isinstance(owner_type.__dict__.get(name, None), alias)):
+            return owner_type.__dict__[name]
+        elif (owner
+              and hasattr(owner, "__dict__")
+              and isinstance(owner.__dict__.get(name, None), alias)):
+            return owner.__dict__[name]
+        return None
+
+    def _validate_nested(self, owner, owner_type) -> any:
+        # basic 2 ptrs
+        p1 = self._get_alias_obj(owner, owner_type, self._for)
+        p2 = self
+
+        move_p2 = True
+        # p2 moves slower so p1 will always resolve to non-alias first, if either do
+        while isinstance(p1, alias):
+            if p1 is p2:
+                raise CircularAliasError(
+                    f"Nested alias {self._name} references a circular alias"
+                )
+            p1 = self._get_alias_obj(owner, owner_type, p1._for)
+            p2 = p2 if not move_p2 else self._get_alias_obj(owner, owner_type, p2._for)
+            move_p2 = not move_p2
+        return p1
+
     def __get__(self, owner, owner_type=None):
-        if owner is None:
+        value = None
+        if isinstance(self._get_alias_obj(owner, owner_type, self._for), alias):
+            # this only works for objects defining __dict__, if they have __slots__ we need getattr
+            value = self._validate_nested(owner_type, owner_type)
+
+        if value:
+            # so we don't have to repeat ourselves in the elif/else's
+            pass
+        elif owner is None:
             # this happens when called from class level
-            if hasattr(owner_type, self._for):
-                return getattr(owner_type, self._for)
-            return self
-        # just return the aliased attribute
-        value = getattr(owner, self._for)
-        # if value and hasattr(value, "__get__"):
-        #     value = value.__get__(owner, owner_type)
+            try:
+                value = getattr(owner_type, self._for)
+            except AttributeError:
+                value = self
+        else:
+            # just return the aliased attribute
+            value = getattr(owner, self._for)
+
         return value
 
     def __set__(self, owner, value):
@@ -37,8 +78,9 @@ class alias:
             cls = type(cls)
         setattr(cls, name, self)
         # needs to happen after setattr as that's when it happens in the
-        # typical descriptor workflow. In this class, the statement has
-        # no effect, but child classes might add functionality to __set_name__
+        # typical descriptor workflow. In this class's current implementation,
+        # the statement has no effect, but in the future this might not be the case
+        # and consumer child classes might add functionality to __set_name__
         self.__set_name__(owner, name)
 
 
