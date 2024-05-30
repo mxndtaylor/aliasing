@@ -1,7 +1,9 @@
+import warnings
+
 import pytest
 
 from py_aliasing.alias import alias
-from py_aliasing.error import CircularAliasError
+from py_aliasing.error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
 
 PROP_NAME = "prop"
 
@@ -66,6 +68,38 @@ def test_alias_attach_name_on_attach():
     my_alias = alias(PROP_NAME)
     my_alias.attach(alias_test, "my_second_attached_alias")
     assert getattr(alias_test, "my_second_attached_alias") == alias_test.prop
+
+
+def test_alias_trample_on_attach_err():
+    alias_name = "my_alias_name"
+    alias_test = AliasAttachTest()
+    my_alias = alias(PROP_NAME, alias_name=alias_name)
+    my_alias.attach(alias_test)
+    second_alias = alias(PROP_NAME, alias_name=alias_name)
+    with pytest.raises(TrampleAliasError) as exc_info:
+        second_alias.attach(alias_test)
+
+    assert isinstance(exc_info.value, TrampleAliasError)
+    assert exc_info.value.args[0] == (f"Owner class {AliasAttachTest.__name__} already has member with name"
+                                      f" {alias_name}. Cannot override it with alias for {PROP_NAME} by default,"
+                                      f" pass `trample_ok=True` to override the member anyway.")
+
+
+def test_alias_trample_on_attach_warning():
+    alias_name = "my_alias_name"
+    alias_test = AliasAttachTest()
+    my_alias = alias(PROP_NAME, alias_name=alias_name)
+    my_alias.attach(alias_test)
+    second_alias = alias(PROP_NAME, alias_name=alias_name)
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        second_alias.attach(alias_test, trample_ok=True)
+
+        assert len(w) == 1
+        assert issubclass(w[-1].category, TrampleAliasWarning)
+        assert w[-1].message == (f"Owner class {AliasAttachTest.__name__} already has member with name"
+                                 f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
+                                 f" to disallow this behavior")
 
 
 class TestCircAlias:
