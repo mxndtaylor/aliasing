@@ -112,9 +112,9 @@ def test_alias_trample_on_attach_warning():
 
         assert len(w) == 1
         assert issubclass(w[-1].category, TrampleAliasWarning)
-        assert w[-1].message == (f"Owner class {AliasAttachTest.__name__} already has member with name"
-                                 f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
-                                 f" to disallow this behavior")
+        assert str(w[-1].message) == (f"Owner class {AliasAttachTest.__name__} already has member with name"
+                                      f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
+                                      f" to disallow this behavior.")
 
 
 class TestCircAlias:

@@ -43,10 +43,10 @@ def test_valias_trample_warning():
 
         assert len(w) == 1
         assert issubclass(w[-1].category, TrampleAliasWarning)
-        assert w[-1].message == (f"Owner class {WarningTest.__name__} already has member with name"
-                                 f" {WarningTest.method2.__name__}. Overriding with alias for"
-                                 f" {WarningTest.method1.__name__}. Remove '{WarningTest.method2.__name__}'"
-                                 f" from the `trample_ok` list parameter to disallow this behavior")
+        assert str(w[-1].message) == (f"Owner class {WarningTest.__name__} already has member with name"
+                                      f" {WarningTest.method2.__name__}. Overriding with alias for"
+                                      f" {WarningTest.method1.__name__}. Remove '{WarningTest.method2.__name__}'"
+                                      f" from the `trample_ok` list parameter to disallow this behavior.")
 
 
 def test_valias_trample_err():
