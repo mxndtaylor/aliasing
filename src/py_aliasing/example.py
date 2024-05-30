@@ -13,7 +13,7 @@ class Example:
 
     @aliased
     def method(self):
-        return 'my method call'
+        return "my method call"
 
     method_alias1 = method.alias()
 

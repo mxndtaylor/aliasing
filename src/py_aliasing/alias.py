@@ -6,12 +6,14 @@ from .error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
 
 
 class alias:
-    def __init__(self,
-                 alias_for: str,
-                 alias_name: str | None = None,
-                 *,
-                 trample_ok: bool = False,
-                 _aliased: 'aliased' = None):
+    def __init__(
+        self,
+        alias_for: str,
+        alias_name: str | None = None,
+        *,
+        trample_ok: bool = False,
+        _aliased: "aliased" = None,
+    ):
         self._for = alias_for
         # optionally provide the name here in case you want to init it without a containing class
         self._name = alias_name
@@ -23,14 +25,18 @@ class alias:
         self._name = name
 
     @staticmethod
-    def _get_alias_obj(owner, owner_type, name) -> Optional['alias']:
-        if (owner_type
-                and hasattr(owner_type, "__dict__")
-                and isinstance(owner_type.__dict__.get(name, None), alias)):
+    def _get_alias_obj(owner, owner_type, name) -> Optional["alias"]:
+        if (
+            owner_type
+            and hasattr(owner_type, "__dict__")
+            and isinstance(owner_type.__dict__.get(name, None), alias)
+        ):
             return owner_type.__dict__[name]
-        elif (owner
-              and hasattr(owner, "__dict__")
-              and isinstance(owner.__dict__.get(name, None), alias)):
+        elif (
+            owner
+            and hasattr(owner, "__dict__")
+            and isinstance(owner.__dict__.get(name, None), alias)
+        ):
             return owner.__dict__[name]
         return None
 
@@ -73,7 +79,9 @@ class alias:
         return value
 
     def __set__(self, owner, value):
-        raise NotImplementedError(f"cannot set the value of read-only alias {self._name}")
+        raise NotImplementedError(
+            f"cannot set the value of read-only alias {self._name}"
+        )
 
     def attach(self, owner, name: str | None = None, *, trample_ok: bool = None):
         trample_ok = trample_ok if trample_ok is not None else self._trample_ok
@@ -88,12 +96,16 @@ class alias:
         if hasattr(cls, name):
             message = f"Owner class {cls.__name__} already has member with name {name}."
             if trample_ok:
-                message += (f" Overriding with alias for {self._for}."
-                            f" Pass `trample_ok=False` to disallow this behavior.")
+                message += (
+                    f" Overriding with alias for {self._for}."
+                    f" Pass `trample_ok=False` to disallow this behavior."
+                )
                 warn(message, TrampleAliasWarning)
             else:
-                message += (f" Cannot override it with alias for {self._for} by default,"
-                            f" pass `trample_ok=True` to override the member anyway.")
+                message += (
+                    f" Cannot override it with alias for {self._for} by default,"
+                    f" pass `trample_ok=True` to override the member anyway."
+                )
                 raise TrampleAliasError(message)
         setattr(cls, name, self)
         # needs to happen after setattr as that's when it happens in the
@@ -112,18 +124,18 @@ class aliased:
         name = ""
 
         if isinstance(func, alias):
-            aliased_: aliased | None = getattr(func, '_aliased', None)
+            aliased_: aliased | None = getattr(func, "_aliased", None)
             if isinstance(aliased_, aliased):
                 self._original: aliased = aliased_._original
             else:
-                name = getattr(func, '_for')
+                name = getattr(func, "_for")
         elif isinstance(func, aliased):
             self._original: aliased = func
 
         if self._original is not self:
-            self._func = getattr(self._original, '_func')
-            self._init_doc = getattr(self._original, '_init_doc')
-            self._aliases = getattr(self._original, '_aliases')
+            self._func = getattr(self._original, "_func")
+            self._init_doc = getattr(self._original, "_init_doc")
+            self._aliases = getattr(self._original, "_aliases")
             # possible source or undesired/unexpected behavior if called directly
             name = self._original._name
         elif not name:
@@ -135,12 +147,14 @@ class aliased:
         self._private_name = ""
         self._refresh_name()
 
-        self._doc_sep = '\n'
+        self._doc_sep = "\n"
         self._doc = self._init_doc
         self._refresh_doc()
 
     def _refresh_doc(self):
-        alias_list = ",".join(filter(None, map(lambda a: getattr(a, "_name", None), self._aliases)))
+        alias_list = ",".join(
+            filter(None, map(lambda a: getattr(a, "_name", None), self._aliases))
+        )
         aliases_prefix = f"(aliases {alias_list})" if self._aliases else ""
         # renders a docstring like "(aliases method1,method2)\n<your original doc string here"
         self._doc = self._doc_sep.join(filter(None, [aliases_prefix, self._init_doc]))
@@ -167,6 +181,7 @@ class aliased:
         func = getattr(owner, self._private_name)
 
         if callable(func):
+
             @wraps(func)
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
@@ -178,7 +193,7 @@ class aliased:
 
     def alias(self, member: any = None, *, trample_ok: bool = None) -> alias:
         name: str | None
-        if member is not None and hasattr(member, '__name__'):
+        if member is not None and hasattr(member, "__name__"):
             name = member.__name__
         elif member is not None and isinstance(member, str):
             name = member
@@ -186,12 +201,16 @@ class aliased:
             # rely on __set_name__ or attach to assign the name
             name = None
         else:
-            raise RuntimeError(f"could not resolve alias name from non-None, non-str member {member}"
-                               f" without `__name__` attribute")
+            raise RuntimeError(
+                f"could not resolve alias name from non-None, non-str member {member}"
+                f" without `__name__` attribute"
+            )
 
-        new_alias = alias(alias_for=self._original._name,
-                          alias_name=name,
-                          _aliased=self._original,
-                          trample_ok=trample_ok)
+        new_alias = alias(
+            alias_for=self._original._name,
+            alias_name=name,
+            _aliased=self._original,
+            trample_ok=trample_ok,
+        )
         self._aliases.append(new_alias)
         return new_alias

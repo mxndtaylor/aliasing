@@ -14,14 +14,16 @@ class VirtualAliasTest:
 
 def test_valiases_dir():
     va = VirtualAliasTest()
-    filtered_dir = set(filter(lambda x: x.startswith('method'), dir(va)))
-    expected_dir = {'method', 'method1', 'method2'}
+    filtered_dir = set(filter(lambda x: x.startswith("method"), dir(va)))
+    expected_dir = {"method", "method1", "method2"}
     assert filtered_dir == expected_dir
 
 
 def test_valias_dict():
-    filtered_dict_keys = set(filter(lambda x: x.startswith('method'), VirtualAliasTest.__dict__.keys()))
-    expected_dict_keys = {'method', 'method1', 'method2'}
+    filtered_dict_keys = set(
+        filter(lambda x: x.startswith("method"), VirtualAliasTest.__dict__.keys())
+    )
+    expected_dict_keys = {"method", "method1", "method2"}
     assert filtered_dict_keys == expected_dict_keys
 
 
@@ -43,14 +45,17 @@ def test_valias_trample_warning():
 
         assert len(w) == 1
         assert issubclass(w[-1].category, TrampleAliasWarning)
-        assert str(w[-1].message) == (f"Owner class {WarningTest.__name__} already has member with name"
-                                      f" {WarningTest.method2.__name__}. Overriding with alias for"
-                                      f" {WarningTest.method1.__name__}. Remove '{WarningTest.method2.__name__}'"
-                                      f" from the `trample_ok` list parameter to disallow this behavior.")
+        assert str(w[-1].message) == (
+            f"Owner class {WarningTest.__name__} already has member with name"
+            f" {WarningTest.method2.__name__}. Overriding with alias for"
+            f" {WarningTest.method1.__name__}. Remove '{WarningTest.method2.__name__}'"
+            f" from the `trample_ok` list parameter to disallow this behavior."
+        )
 
 
 def test_valias_trample_err():
     with pytest.raises(RuntimeError) as exc_info:
+
         class ErrorTest:
             @valiases("method2")
             def method1(self): ...
@@ -60,8 +65,10 @@ def test_valias_trample_err():
     trample_error = exc_info.value.__cause__
 
     assert isinstance(trample_error, TrampleAliasError)
-    assert trample_error.args[0] == (f"Owner class ErrorTest already has member with name"
-                                     f" method2. Cannot override it with alias for"
-                                     f" method1 by default, pass"
-                                     f" `trample_ok=['method2']` to override the member"
-                                     f" anyway.")
+    assert trample_error.args[0] == (
+        f"Owner class ErrorTest already has member with name"
+        f" method2. Cannot override it with alias for"
+        f" method1 by default, pass"
+        f" `trample_ok=['method2']` to override the member"
+        f" anyway."
+    )

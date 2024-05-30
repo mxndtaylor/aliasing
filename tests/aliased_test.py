@@ -14,16 +14,14 @@ class AliasedTester:
     def second_prop_alias(self): ...
 
     @prop_alias.alias
-    class PropPascalCase:
-        ...
+    class PropPascalCase: ...
 
     @aliased
     def aliased_method(self):
         return self.aliased_val
 
     @aliased_method.alias
-    class PascalCaseMethod:
-        ...
+    class PascalCaseMethod: ...
 
     @aliased_method.alias
     def normal_alias(self): ...
@@ -44,8 +42,7 @@ class AliasedTester:
             return isinstance(other, type(self)) and self.prop == other.prop
 
     @AliasedInnerClass.alias
-    class NormalClassAlias:
-        ...
+    class NormalClassAlias: ...
 
     snake_case_class_alias = AliasedInnerClass.alias()
 
@@ -111,7 +108,7 @@ class TestAliased:
         assert self.tester.PascalCaseMethod() == self.tester.aliased_val
 
     def test_aliased_method_doc(self):
-        alias_delimiter = ','
+        alias_delimiter = ","
 
         alias_names = [
             "PascalCaseMethod",
@@ -123,15 +120,16 @@ class TestAliased:
         start = "(aliases "
         end = ")"
         doc = self.tester.aliased_method.__doc__
-        assert doc[:len(start)] == start
+        assert doc[: len(start)] == start
 
         end_index = doc.find(end, len(start))
         assert end_index > len(start)
 
-        middle = doc[len(start):end_index]
+        middle = doc[len(start) : end_index]
         parsed_names = middle.split(alias_delimiter)
-        assert (len(parsed_names) == len(alias_names)
-                and set(parsed_names) & set(alias_names) == set(alias_names))
+        assert len(parsed_names) == len(alias_names) and set(parsed_names) & set(
+            alias_names
+        ) == set(alias_names)
 
     def test_nested_alias(self):
         assert self.tester.nested_alias() == self.tester.aliased_val
@@ -159,15 +157,31 @@ class TestAliased:
     @classmethod
     def test_snake_case_class_alias(cls):
         val = "my val"
-        assert isinstance(cls().tester_cls.snake_case_class_alias(val), cls.tester_cls.AliasedInnerClass)
-        assert isinstance(cls.tester_cls.method_class_alias(val), cls.tester_cls.AliasedInnerClass)
-        assert isinstance(cls.tester_cls.cls_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
-        assert isinstance(cls.tester_cls.static_method_class_alias(val), cls.tester_cls.AliasedInnerClass)
+        assert isinstance(
+            cls().tester_cls.snake_case_class_alias(val),
+            cls.tester_cls.AliasedInnerClass,
+        )
+        assert isinstance(
+            cls.tester_cls.method_class_alias(val), cls.tester_cls.AliasedInnerClass
+        )
+        assert isinstance(
+            cls.tester_cls.cls_method_class_alias(val), cls.tester_cls.AliasedInnerClass
+        )
+        assert isinstance(
+            cls.tester_cls.static_method_class_alias(val),
+            cls.tester_cls.AliasedInnerClass,
+        )
 
     @classmethod
     def test_aliased_class_methods(cls):
-        assert cls.tester_cls.aliased_class_method() == cls.tester_cls.aliased_class_method_alias()
+        assert (
+            cls.tester_cls.aliased_class_method()
+            == cls.tester_cls.aliased_class_method_alias()
+        )
 
     @classmethod
     def test_aliased_static_methods(cls):
-        assert cls.tester_cls.aliased_static_method() == cls.tester_cls.aliased_static_method_alias()
+        assert (
+            cls.tester_cls.aliased_static_method()
+            == cls.tester_cls.aliased_static_method_alias()
+        )

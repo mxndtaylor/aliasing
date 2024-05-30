@@ -91,9 +91,11 @@ def test_alias_trample_on_attach_err():
         second_alias.attach(alias_test)
 
     assert isinstance(exc_info.value, TrampleAliasError)
-    assert exc_info.value.args[0] == (f"Owner class {AliasAttachTest.__name__} already has member with name"
-                                      f" {alias_name}. Cannot override it with alias for {PROP_NAME} by default,"
-                                      f" pass `trample_ok=True` to override the member anyway.")
+    assert exc_info.value.args[0] == (
+        f"Owner class {AliasAttachTest.__name__} already has member with name"
+        f" {alias_name}. Cannot override it with alias for {PROP_NAME} by default,"
+        f" pass `trample_ok=True` to override the member anyway."
+    )
 
 
 def test_alias_trample_on_attach_warning():
@@ -112,26 +114,28 @@ def test_alias_trample_on_attach_warning():
 
         assert len(w) == 1
         assert issubclass(w[-1].category, TrampleAliasWarning)
-        assert str(w[-1].message) == (f"Owner class {AliasAttachTest.__name__} already has member with name"
-                                      f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
-                                      f" to disallow this behavior.")
+        assert str(w[-1].message) == (
+            f"Owner class {AliasAttachTest.__name__} already has member with name"
+            f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
+            f" to disallow this behavior."
+        )
 
 
 class TestCircAlias:
     # 2 alias circle
-    prop1 = alias('prop2')
-    prop2 = alias('prop1')
+    prop1 = alias("prop2")
+    prop2 = alias("prop1")
 
     # alias refers to a circular alias
-    prop3 = alias('prop2')
+    prop3 = alias("prop2")
 
     # 1 alias circle
-    prop4 = alias('prop4')
+    prop4 = alias("prop4")
 
     # 3 alias circle
-    prop5 = alias('prop7')
-    prop6 = alias('prop5')
-    prop7 = alias('prop6')
+    prop5 = alias("prop7")
+    prop6 = alias("prop5")
+    prop7 = alias("prop6")
 
     @staticmethod
     def _err_message(name) -> str:
@@ -140,28 +144,28 @@ class TestCircAlias:
     def test_len_2_circle(self):
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop1
-        assert exc_info.value.args[0] == self._err_message('prop1')
+        assert exc_info.value.args[0] == self._err_message("prop1")
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop2
-        assert exc_info.value.args[0] == self._err_message('prop2')
+        assert exc_info.value.args[0] == self._err_message("prop2")
 
     def test_len_1_circle(self):
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop4
-        assert exc_info.value.args[0] == self._err_message('prop4')
+        assert exc_info.value.args[0] == self._err_message("prop4")
 
     def test_len_3_circle(self):
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop5
-        assert exc_info.value.args[0] == self._err_message('prop5')
+        assert exc_info.value.args[0] == self._err_message("prop5")
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop6
-        assert exc_info.value.args[0] == self._err_message('prop6')
+        assert exc_info.value.args[0] == self._err_message("prop6")
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop7
-        assert exc_info.value.args[0] == self._err_message('prop7')
+        assert exc_info.value.args[0] == self._err_message("prop7")
 
     def test_reference_to_circle(self):
         with pytest.raises(CircularAliasError) as exc_info:
             p = self.prop3
-        assert exc_info.value.args[0] == self._err_message('prop3')
+        assert exc_info.value.args[0] == self._err_message("prop3")
