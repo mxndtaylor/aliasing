@@ -25,13 +25,13 @@ class valiased(aliased):
                 except TrampleAliasWarning as w:
                     msg = str(w.args[0]).replace(
                         "Pass `trample_ok=False`",
-                        f"Remove '{alias}' from the `trample_ok` list parameter",
+                        f"Remove '{alias._name}' from the `trample_ok` list parameter",
                     )
                     is_warn = True
                 except TrampleAliasError as e:
                     msg = str(e.args[0]).replace(
                         "trample_ok=True",
-                        f"trample_ok=['{alias}']",
+                        f"trample_ok=['{alias._name}']",
                     )
                     is_err = True
         finally:
