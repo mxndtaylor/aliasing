@@ -40,12 +40,11 @@ def test_alias_doc():
     assert AliasTest.my_alias.__doc__ == f"Alias for {PROP_NAME}"
 
 
-class AliasAttachTest:
-    def __init__(self):
-        self.prop: str = "anything"
-
-
 def test_alias_attach():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
     alias_test = AliasAttachTest()
     my_alias = alias(PROP_NAME, alias_name="my_attached_alias")
     my_alias.attach(alias_test)
@@ -54,6 +53,10 @@ def test_alias_attach():
 
 
 def test_alias_attach_err():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
     alias_test = AliasAttachTest()
     my_alias = alias(PROP_NAME)
     with pytest.raises(RuntimeError) as exc_info:
@@ -64,6 +67,10 @@ def test_alias_attach_err():
 
 
 def test_alias_attach_name_on_attach():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
     alias_test = AliasAttachTest()
     my_alias = alias(PROP_NAME)
     my_alias.attach(alias_test, "my_second_attached_alias")
@@ -71,6 +78,10 @@ def test_alias_attach_name_on_attach():
 
 
 def test_alias_trample_on_attach_err():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
     alias_name = "my_alias_name"
     alias_test = AliasAttachTest()
     my_alias = alias(PROP_NAME, alias_name=alias_name)
@@ -86,6 +97,10 @@ def test_alias_trample_on_attach_err():
 
 
 def test_alias_trample_on_attach_warning():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
     alias_name = "my_alias_name"
     alias_test = AliasAttachTest()
     my_alias = alias(PROP_NAME, alias_name=alias_name)
