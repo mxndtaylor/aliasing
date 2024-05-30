@@ -6,9 +6,9 @@ class valiased(aliased):
     returned from valiases.__call__
     descriptor that adds the named aliases to the object during the __set_name__ phase
     """
-    def __init__(self, func, *aliases: str):
+    def __init__(self, func, *aliases: str, trample_ok: bool = None):
         super().__init__(func)
-        self._aliases = list(map(lambda name: self.alias(name), aliases))
+        self._aliases = list(map(lambda name: self.alias(name, trample_ok=trample_ok), aliases))
 
     def __set_name__(self, owner, name):
         super().__set_name__(owner, name)
@@ -24,8 +24,9 @@ class valiases:
         ...
         assert method() == a()
     """
-    def __init__(self, *aliases: str):
-        self._aliased = aliased(*aliases)
+    def __init__(self, *aliases: str, trample_ok: bool = None):
+        self._aliases = aliases
+        self._trample_ok = trample_ok
 
     def __call__(self, func):
-        return self._aliased(func)
+        return valiased(func, *self._aliases, trample_ok=self._trample_ok)

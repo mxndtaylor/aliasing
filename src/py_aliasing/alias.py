@@ -175,7 +175,7 @@ class aliased:
 
         return func
 
-    def alias(self, member: any = None) -> alias:
+    def alias(self, member: any = None, *, trample_ok: bool = None) -> alias:
         name: str | None
         if member is not None and hasattr(member, '__name__'):
             name = member.__name__
@@ -188,6 +188,9 @@ class aliased:
             raise RuntimeError(f"could not resolve alias name from non-None, non-str member {member}"
                                f" without `__name__` attribute")
 
-        new_alias = alias(alias_for=self._original._name, alias_name=name, _aliased=self._original)
+        new_alias = alias(alias_for=self._original._name,
+                          alias_name=name,
+                          _aliased=self._original,
+                          trample_ok=trample_ok)
         self._aliases.append(new_alias)
         return new_alias
