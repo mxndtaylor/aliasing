@@ -86,7 +86,7 @@ class alias:
             # this way we support both
             cls = type(cls)
         if hasattr(cls, name):
-            message = f"Owner {owner} already has member with name {name}."
+            message = f"Owner class {cls.__name__} already has member with name {name}."
             if trample_ok:
                 message += (f" Overriding with alias for {self._for}."
                             f" Pass `trample_ok=False` to disallow this behavior.")
