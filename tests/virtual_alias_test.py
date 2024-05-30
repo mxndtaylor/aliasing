@@ -20,8 +20,7 @@ def test_valiases_dir():
 
 
 def test_valias_dict():
-    va = VirtualAliasTest()
-    filtered_dict_keys = set(filter(lambda x: x.startswith('method'), va.__dict__.keys()))
+    filtered_dict_keys = set(filter(lambda x: x.startswith('method'), VirtualAliasTest.__dict__.keys()))
     expected_dict_keys = {'method', 'method1', 'method2'}
     assert filtered_dict_keys == expected_dict_keys
 
