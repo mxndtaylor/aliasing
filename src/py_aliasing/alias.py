@@ -1,16 +1,23 @@
 from functools import wraps
 from typing import Optional
+from warnings import warn
 
-from .error import CircularAliasError
+from .error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
 
 
 class alias:
-    def __init__(self, alias_for: str, alias_name: str | None = None, *, _aliased: 'aliased' = None):
+    def __init__(self,
+                 alias_for: str,
+                 alias_name: str | None = None,
+                 *,
+                 trample_ok: bool = False,
+                 _aliased: 'aliased' = None):
         self._for = alias_for
         # optionally provide the name here in case you want to init it without a containing class
         self._name = alias_name
         self.__doc__ = f"Alias for {self._for}"
         self._aliased = _aliased
+        self._trample_ok = trample_ok
 
     def __set_name__(self, owner, name):
         self._name = name
@@ -68,7 +75,8 @@ class alias:
     def __set__(self, owner, value):
         raise NotImplementedError(f"cannot set the value of read-only alias {self._name}")
 
-    def attach(self, owner, name: str | None = None):
+    def attach(self, owner, name: str | None = None, *, trample_ok: bool = None):
+        trample_ok = trample_ok if trample_ok is not None else self._trample_ok
         name = name or self._name
         if not name:
             raise RuntimeError("must provide name to attach alias")
@@ -77,6 +85,16 @@ class alias:
             # we have to attach the descriptor to the class, not the instance
             # this way we support both
             cls = type(cls)
+        if hasattr(cls, name):
+            message = f"Owner {owner} already has member with name {name}."
+            if trample_ok:
+                message += (f" Overriding with alias for {self._for}."
+                            f" Pass `trample_ok=False` to disallow this behavior.")
+                warn(message, TrampleAliasWarning)
+            else:
+                message += (f" Cannot override member by default, pass `trample_ok=True`"
+                            f" to allow the member to be overridden.")
+                raise TrampleAliasError(message)
         setattr(cls, name, self)
         # needs to happen after setattr as that's when it happens in the
         # typical descriptor workflow. In this class's current implementation,
