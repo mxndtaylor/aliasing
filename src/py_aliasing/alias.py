@@ -92,8 +92,8 @@ class alias:
                             f" Pass `trample_ok=False` to disallow this behavior.")
                 warn(message, TrampleAliasWarning)
             else:
-                message += (f" Cannot override member by default, pass `trample_ok=True`"
-                            f" to allow the member to be overridden.")
+                message += (f" Cannot override it with alias for {self._for} by default,"
+                            f" pass `trample_ok=True` to override the member anyway.")
                 raise TrampleAliasError(message)
         setattr(cls, name, self)
         # needs to happen after setattr as that's when it happens in the
