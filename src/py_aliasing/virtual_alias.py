@@ -1,4 +1,6 @@
-from . import aliased
+import warnings
+
+from . import aliased, TrampleAliasWarning, TrampleAliasError
 
 
 class valiased(aliased):
@@ -13,8 +15,31 @@ class valiased(aliased):
 
     def __set_name__(self, owner, name):
         super().__set_name__(owner, name)
-        for alias in self._aliases:
-            alias.attach(owner)
+        is_warn = is_err = False
+        msg = ""
+        try:
+            warnings.filterwarnings("error", category=TrampleAliasWarning)
+            for alias in self._aliases:
+                try:
+                    alias.attach(owner)
+                except TrampleAliasWarning as w:
+                    msg = str(w.args[0]).replace(
+                        "Pass `trample_ok=False`",
+                        f"Remove '{alias}' from the `trample_ok` parameter list",
+                    )
+                    is_warn = True
+                except TrampleAliasError as e:
+                    msg = str(e.args[0]).replace(
+                        "trample_ok=True",
+                        f"trample_ok=['{alias}']",
+                    )
+                    is_err = True
+        finally:
+            warnings.resetwarnings()
+        if is_warn:
+            warnings.warn(msg, category=TrampleAliasWarning)
+        if is_err:
+            raise TrampleAliasError(msg)
 
 
 class valiases:
