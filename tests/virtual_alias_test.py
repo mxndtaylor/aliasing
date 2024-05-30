@@ -50,16 +50,18 @@ def test_valias_trample_warning():
 
 
 def test_valias_trample_err():
-    with pytest.raises(TrampleAliasError) as exc_info:
+    with pytest.raises(RuntimeError) as exc_info:
         class ErrorTest:
             @valiases("method2")
             def method1(self): ...
 
             def method2(self): ...
 
-    assert isinstance(exc_info.value, TrampleAliasError)
-    assert exc_info.value.args[0] == (f"Owner class {ErrorTest.__name__} already has member with name"
-                                      f" {ErrorTest.method2.__name__}. Cannot override it with alias for"
-                                      f" {ErrorTest.method1.__name__} by default, pass"
-                                      f" `trample_ok=[{ErrorTest.method2.__name__}]` to override the member"
-                                      f" anyway.")
+    trample_error = exc_info.value.__cause__
+
+    assert isinstance(trample_error, TrampleAliasError)
+    assert trample_error.args[0] == (f"Owner class ErrorTest already has member with name"
+                                     f" method2. Cannot override it with alias for"
+                                     f" method1 by default, pass"
+                                     f" `trample_ok=['method2']` to override the member"
+                                     f" anyway.")
