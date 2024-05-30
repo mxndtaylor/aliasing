@@ -124,6 +124,7 @@ class aliased:
             self._func = getattr(self._original, '_func')
             self._init_doc = getattr(self._original, '_init_doc')
             self._aliases = getattr(self._original, '_aliases')
+            # possible source or undesired/unexpected behavior if called directly
             name = self._original._name
         elif not name:
             name = func.__name__
