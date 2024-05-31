@@ -63,7 +63,7 @@ def test_valias_trample_warning():
 
 
 def test_valias_trample_err():
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises((RuntimeError, TrampleAliasError)) as exc_info:
 
         class ErrorTest:
             @valiases("method2")
@@ -71,7 +71,10 @@ def test_valias_trample_err():
 
             def method2(self): ...
 
-    trample_error = exc_info.value.__cause__
+    trample_error = exc_info.value
+    if isinstance(trample_error, RuntimeError):
+        # python3.12 doesn't need this
+        trample_error = exc_info.value.__cause__
 
     assert isinstance(trample_error, TrampleAliasError)
     assert trample_error.args[0] == (
