@@ -1,4 +1,4 @@
-from py_aliasing.alias import alias, aliased
+from aliasing.alias import alias, aliased
 
 PROP_NAME = "prop"
 

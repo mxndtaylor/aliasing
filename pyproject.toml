@@ -1,5 +1,5 @@
 [project]
-name = "py-aliasing"
+name = "aliasing"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [

@@ -2,8 +2,7 @@ import warnings
 
 import pytest
 
-from py_aliasing import TrampleAliasWarning, TrampleAliasError
-from py_aliasing.virtual_alias import valiases
+from aliasing import TrampleAliasWarning, TrampleAliasError, valiases
 
 
 class VirtualAliasTest:

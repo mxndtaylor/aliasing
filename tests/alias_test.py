@@ -2,8 +2,8 @@ import warnings
 
 import pytest
 
-from py_aliasing.alias import alias
-from py_aliasing.error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
+from aliasing.alias import alias
+from aliasing.error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
 
 PROP_NAME = "prop"
 
