@@ -5,8 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "mxt", email = "mxnd.taylor@gmail.com"},
 ]
-dependencies = []
-requires-python = "==3.11.*"
+requires-python = ">=3.8"
 readme = "README.md"
 license = {text = "MIT"}
 
@@ -21,9 +20,10 @@ distribution = true
 excludes = ["**/example.py", "tests/*"]
 
 [tool.pdm.scripts]
-examples = "python -m py_aliasing.example"
+examples = "python -m aliasing.example"
 test = "pytest"
-coverage = {composite=["python -m coverage run -m pytest", "python -m coverage html"]}
+coverage = {composite=["python -m coverage run -m tox --parallel", "python -m coverage html -d {args:html_cov}"]}
+regression = "tox"
 fmt = "black"
 
 [tool.pdm.dev-dependencies]
@@ -31,6 +31,7 @@ dev = [
     "pytest>=8.2.1",
     "black>=24.4.2",
     "coverage>=7.5.1",
+    "tox>=4.15.0",
 ]
 
 [tool.coverage.run]
@@ -38,3 +39,4 @@ omit = [
     "tests/**",
     "*test*"
 ]
+branch = true
