@@ -24,7 +24,7 @@ examples = "python -m aliasing.example"
 test = "pytest"
 coverage = {composite=["python -m coverage run -m pytest", "python -m coverage html"]}
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
-fmt = "black"
+fmt = "black {args:.}"
 
 [tool.pdm.dev-dependencies]
 dev = [
