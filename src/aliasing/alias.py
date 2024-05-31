@@ -31,7 +31,7 @@ class alias:
                 and hasattr(owner, "__dict__")
                 and isinstance(owner.__dict__.get(name, None), alias)
         ):
-            return owner_type.__dict__[name]
+            return owner.__dict__[name]
         elif (
                 owner_type
                 and hasattr(owner_type, "__dict__")
