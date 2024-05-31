@@ -133,51 +133,70 @@ def test_alias_trample_on_attach_warning():
         )
 
 
+class CircAliasTester:
+    prop1: alias
+    prop2: alias
+    prop3: alias
+    prop4: alias
+    prop5: alias
+    prop6: alias
+    prop7: alias
+
+
 class TestCircAlias:
-    # 2 alias circle
-    prop1 = alias("prop2")
-    prop2 = alias("prop1")
+    @staticmethod
+    def _circ_tester():
+        class CircAliasTesterImpl(CircAliasTester):
+            # 2 alias circle
+            prop1 = alias("prop2")
+            prop2 = alias("prop1")
 
-    # alias refers to a circular alias
-    prop3 = alias("prop2")
+            # alias refers to a circular alias
+            prop3 = alias("prop2")
 
-    # 1 alias circle
-    prop4 = alias("prop4")
+            # 1 alias circle
+            prop4 = alias("prop4")
 
-    # 3 alias circle
-    prop5 = alias("prop7")
-    prop6 = alias("prop5")
-    prop7 = alias("prop6")
+            # 3 alias circle
+            prop5 = alias("prop7")
+            prop6 = alias("prop5")
+            prop7 = alias("prop6")
+
+        return CircAliasTesterImpl()
 
     @staticmethod
     def _err_message(name) -> str:
         return f"Nested alias {name} references a circular alias"
 
     def test_len_2_circle(self):
+        instance = self._circ_tester()
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop1
+            p = instance.prop1
         assert exc_info.value.args[0] == self._err_message("prop1")
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop2
+            p = instance.prop2
         assert exc_info.value.args[0] == self._err_message("prop2")
 
     def test_len_1_circle(self):
+        instance = self._circ_tester()
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop4
+            p = instance.prop4
         assert exc_info.value.args[0] == self._err_message("prop4")
 
     def test_len_3_circle(self):
+        instance = self._circ_tester()
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop5
+            p = instance.prop5
         assert exc_info.value.args[0] == self._err_message("prop5")
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop6
+            p = instance.prop6
         assert exc_info.value.args[0] == self._err_message("prop6")
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop7
+            p = instance.prop7
         assert exc_info.value.args[0] == self._err_message("prop7")
 
     def test_reference_to_circle(self):
+        instance = self._circ_tester()
         with pytest.raises(CircularAliasError) as exc_info:
-            p = self.prop3
+            p = instance.prop3
         assert exc_info.value.args[0] == self._err_message("prop3")
