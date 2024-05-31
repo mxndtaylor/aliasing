@@ -349,3 +349,30 @@ def test_static_method_no_name_found():
     assert isinstance(error, RuntimeError)
     assert error.args[0] == (f"could not resolve alias name from non-None, non-str"
                              f" member {bad_alias_target} without `__name__` attribute")
+
+
+def test_aliased_aliased():
+    class AliasTest:
+        @aliased
+        @aliased
+        def method(self):
+            return "bar"
+
+        @method.alias
+        def method2(self): ...
+
+    assert AliasTest().method() == AliasTest().method2()
+
+
+def test_aliased_aliased_nontrivial():
+    class AliasTest:
+        @aliased
+        def method(self):
+            return "bar"
+
+        method2 = aliased(method)
+
+        method3 = method2.alias()
+
+    assert AliasTest().method() == AliasTest().method2()
+    assert AliasTest().method() == AliasTest().method3()
