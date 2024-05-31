@@ -193,13 +193,16 @@ class aliased:
 
     def alias(self, member: any = None, *, trample_ok: bool = None) -> alias:
         name: Optional[str]
-        if member is not None and hasattr(member, "__name__"):
-            name = member.__name__
-        elif member is not None and isinstance(member, str):
-            name = member
-        elif member is None:
+        if member is None:
             # rely on __set_name__ or attach to assign the name
             name = None
+        elif hasattr(member, "__name__"):
+            name = member.__name__
+        elif isinstance(member, str):
+            name = member
+        elif hasattr(member, '__func__'):
+            # support for staticmethod in <=3.9
+            name = member.__func__.__name__
         else:
             raise RuntimeError(
                 f"could not resolve alias name from non-None, non-str member {member}"
