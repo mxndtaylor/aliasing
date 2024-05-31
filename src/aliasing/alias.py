@@ -9,7 +9,7 @@ class alias:
     def __init__(
         self,
         alias_for: str,
-        alias_name: str | None = None,
+        alias_name: Optional[str] = None,
         *,
         trample_ok: bool = False,
         _aliased: "aliased" = None,
@@ -83,7 +83,7 @@ class alias:
             f"cannot set the value of read-only alias {self._name}"
         )
 
-    def attach(self, owner, name: str | None = None, *, trample_ok: bool = None):
+    def attach(self, owner, name: Optional[str] = None, *, trample_ok: bool = None):
         trample_ok = trample_ok if trample_ok is not None else self._trample_ok
         name = name or self._name
         if not name:
@@ -124,7 +124,7 @@ class aliased:
         name = ""
 
         if isinstance(func, alias):
-            aliased_: aliased | None = getattr(func, "_aliased", None)
+            aliased_: Optional[aliased] = getattr(func, "_aliased", None)
             if isinstance(aliased_, aliased):
                 self._original: aliased = aliased_._original
             else:
@@ -160,7 +160,7 @@ class aliased:
         self._doc = self._doc_sep.join(filter(None, [aliases_prefix, self._init_doc]))
         self.__doc__ = self._doc
 
-    def _refresh_name(self, name: str | None = None):
+    def _refresh_name(self, name: Optional[str] = None):
         self._name = name or self._name
         self._private_name = f"_aliased_{self._name}"
 
@@ -192,7 +192,7 @@ class aliased:
         return func
 
     def alias(self, member: any = None, *, trample_ok: bool = None) -> alias:
-        name: str | None
+        name: Optional[str]
         if member is not None and hasattr(member, "__name__"):
             name = member.__name__
         elif member is not None and isinstance(member, str):
