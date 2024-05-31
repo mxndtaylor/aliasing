@@ -23,7 +23,7 @@ excludes = ["**/example.py", "tests/*"]
 examples = "python -m aliasing.example"
 test = "pytest"
 coverage = {composite=["python -m coverage run -m tox --parallel", "python -m coverage html -d {args:html_cov}"]}
-regression = "tox"
+regression = "tox --parallel"
 fmt = "black"
 
 [tool.pdm.dev-dependencies]
@@ -32,6 +32,7 @@ dev = [
     "black>=24.4.2",
     "coverage>=7.5.1",
     "tox>=4.15.0",
+    "tox-pdm>=0.7.2",
 ]
 
 [tool.coverage.run]
