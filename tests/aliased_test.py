@@ -376,3 +376,13 @@ def test_aliased_aliased_nontrivial():
 
     assert AliasTest().method() == AliasTest().method2()
     assert AliasTest().method() == AliasTest().method3()
+
+
+def test_returning_aliased_descriptor_object_from_cls():
+    class AliasTest:
+        def method(self):
+            return "hello world"
+
+    AliasTest.method = aliased(AliasTest.method)
+
+    assert isinstance(AliasTest.method, aliased)
