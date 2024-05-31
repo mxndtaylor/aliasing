@@ -165,6 +165,36 @@ class TestCircAlias:
         return CircAliasTesterImpl()
 
     @staticmethod
+    def _non_circ_tester():
+        class NonCircAliasTesterImpl(CircAliasTester):
+            prop1 = "my rop"
+            # 1 alias chain
+            prop2 = alias("prop1")
+
+            # 2 alias chain
+            prop3 = alias("prop2")
+
+            # 3 alias chain
+            prop4 = alias("prop3")
+
+            # 4+ alias chain
+            prop5 = alias("prop4")
+            prop6 = alias("prop5")
+            prop7 = alias("prop6")
+
+        return NonCircAliasTesterImpl()
+
+    def test_alias_chain_no_err(self):
+        instance = self._non_circ_tester()
+        assert instance.prop2 == instance.prop1
+        assert instance.prop3 == instance.prop1
+        assert instance.prop4 == instance.prop1
+        assert instance.prop5 == instance.prop1
+        assert instance.prop6 == instance.prop1
+        assert instance.prop7 == instance.prop1
+
+
+    @staticmethod
     def _err_message(name) -> str:
         return f"Nested alias {name} references a circular alias"
 
