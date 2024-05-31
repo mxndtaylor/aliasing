@@ -49,7 +49,7 @@ def test_alias_doc():
     alias_test_cls = _alias_tester()
     alias_test = alias_test_cls()
     assert alias_test.my_alias.__doc__ == alias_test.prop.__doc__
-    assert AliasTest.my_alias.__doc__ == f"Alias for {PROP_NAME}"
+    assert alias_test_cls.my_alias.__doc__ == f"Alias for {PROP_NAME}"
 
 
 def test_alias_attach():
