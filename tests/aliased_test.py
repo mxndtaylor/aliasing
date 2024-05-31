@@ -1,5 +1,7 @@
 from typing import List
 
+import pytest
+
 from aliasing.alias import alias, aliased
 
 PROP_NAME = "prop"
@@ -311,3 +313,39 @@ class TestAliased:
             tester_cls.aliased_static_method()
             == tester_cls.aliased_static_method_alias()
         )
+
+
+def test_static_method_py39_workaround():
+    class Dummy:
+        def __init__(self):
+            self.__func__ = self.workaround_method
+
+        def workaround_method(self): ...
+
+    workaround = Dummy()
+
+    class AliasTest:
+        @aliased
+        def method(self):
+            return "foo"
+
+        cls_workaround_method = method.alias(workaround)
+
+    assert AliasTest().cls_workaround_method() == AliasTest().method()
+
+
+def test_static_method_no_name_found():
+    bad_alias_target = object()
+
+    with pytest.raises(RuntimeError) as exc_info:
+        class AliasTest:
+            @aliased
+            def method(self):
+                return "baz"
+
+            my_alias = method.alias(bad_alias_target)
+
+    error = exc_info.value
+    assert isinstance(error, RuntimeError)
+    assert error.args[0] == (f"could not resolve alias name from non-None, non-str"
+                             f" member {bad_alias_target} without `__name__` attribute")
