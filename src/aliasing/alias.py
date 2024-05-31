@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Optional
+from typing import Optional, List
 from warnings import warn
 
 from .error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
@@ -118,7 +118,7 @@ class alias:
 class aliased:
     def __init__(self, func):
         self._func = func
-        self._aliases: list[alias] = []
+        self._aliases: List[alias] = []
         self._original: aliased = self
 
         name = ""
