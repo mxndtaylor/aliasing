@@ -222,7 +222,7 @@ class TestAliased:
         end_index = doc.find(end, len(start))
         assert end_index > len(start)
 
-        middle = doc[len(start):end_index]
+        middle = doc[len(start) : end_index]
         parsed_names = middle.split(alias_delimiter)
         assert len(parsed_names) == len(alias_names) and set(parsed_names) & set(
             alias_names
@@ -301,8 +301,7 @@ class TestAliased:
     def test_aliased_class_methods(cls):
         tester_cls = cls._class_tester()
         assert (
-            tester_cls.aliased_class_method()
-            == tester_cls.aliased_class_method_alias()
+            tester_cls.aliased_class_method() == tester_cls.aliased_class_method_alias()
         )
 
     @classmethod

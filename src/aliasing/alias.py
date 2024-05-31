@@ -200,7 +200,7 @@ class aliased:
             name = member.__name__
         elif isinstance(member, str):
             name = member
-        elif hasattr(member, '__func__'):
+        elif hasattr(member, "__func__"):
             # support for staticmethod in <=3.9
             name = member.__func__.__name__
         else:

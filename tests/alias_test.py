@@ -193,7 +193,6 @@ class TestCircAlias:
         assert instance.prop6 == instance.prop1
         assert instance.prop7 == instance.prop1
 
-
     @staticmethod
     def _err_message(name) -> str:
         return f"Nested alias {name} references a circular alias"
