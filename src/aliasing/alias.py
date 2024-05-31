@@ -27,17 +27,17 @@ class alias:
     @staticmethod
     def _get_alias_obj(owner, owner_type, name) -> Optional["alias"]:
         if (
-            owner_type
-            and hasattr(owner_type, "__dict__")
-            and isinstance(owner_type.__dict__.get(name, None), alias)
+                owner
+                and hasattr(owner, "__dict__")
+                and isinstance(owner.__dict__.get(name, None), alias)
         ):
             return owner_type.__dict__[name]
         elif (
-            owner
-            and hasattr(owner, "__dict__")
-            and isinstance(owner.__dict__.get(name, None), alias)
+                owner_type
+                and hasattr(owner_type, "__dict__")
+                and isinstance(owner_type.__dict__.get(name, None), alias)
         ):
-            return owner.__dict__[name]
+            return owner_type.__dict__[name]
         return None
 
     def _validate_nested(self, owner, owner_type) -> any:
