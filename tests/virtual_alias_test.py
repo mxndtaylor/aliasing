@@ -6,28 +6,38 @@ from aliasing import TrampleAliasWarning, TrampleAliasError, valiases
 
 
 class VirtualAliasTest:
-    @valiases("method1", "method2")
-    def method(self):
-        return "my method return"
+    def method(self) -> str: ...
+
+
+def _valiases_tester():
+    class VirtualAliasesTester(VirtualAliasTest):
+        @valiases("method1", "method2")
+        def method(self):
+            return "my method return"
+
+    return VirtualAliasesTester
 
 
 def test_valiases_dir():
-    va = VirtualAliasTest()
+    va_cls = _valiases_tester()
+    va = va_cls()
     filtered_dir = set(filter(lambda x: x.startswith("method"), dir(va)))
     expected_dir = {"method", "method1", "method2"}
     assert filtered_dir == expected_dir
 
 
 def test_valias_dict():
+    va_cls = _valiases_tester()
     filtered_dict_keys = set(
-        filter(lambda x: x.startswith("method"), VirtualAliasTest.__dict__.keys())
+        filter(lambda x: x.startswith("method"), va_cls.__dict__.keys())
     )
     expected_dict_keys = {"method", "method1", "method2"}
     assert filtered_dict_keys == expected_dict_keys
 
 
 def test_valiases():
-    va = VirtualAliasTest()
+    va_cls = _valiases_tester()
+    va = va_cls()
     assert va.method() == va.method1()
     assert va.method() == va.method2()
 

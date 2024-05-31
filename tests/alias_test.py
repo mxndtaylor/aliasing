@@ -9,24 +9,35 @@ PROP_NAME = "prop"
 
 
 class AliasTest:
-    my_alias = alias(PROP_NAME)
+    my_alias: alias
+    prop: str
 
-    def __init__(self):
-        self.prop: str = "anything"
+
+def _alias_tester():
+    class AliasTester(AliasTest):
+        my_alias = alias(PROP_NAME)
+
+        def __init__(self):
+            self.prop: str = "anything"
+
+    return AliasTester
 
 
 def test_alias_init():
-    alias_test = AliasTest()
+    alias_test_cls = _alias_tester()
+    alias_test = alias_test_cls()
     assert alias_test.my_alias == alias_test.prop
 
 
 def test_alias_get_prop():
-    alias_test = AliasTest()
+    alias_test_cls = _alias_tester()
+    alias_test = alias_test_cls()
     assert getattr(alias_test, "my_alias") == alias_test.prop
 
 
 def test_alias_set_prop():
-    alias_test = AliasTest()
+    alias_test_cls = _alias_tester()
+    alias_test = alias_test_cls()
     with pytest.raises(NotImplementedError) as exc_info:
         alias_test.my_alias = ""
 
@@ -35,7 +46,8 @@ def test_alias_set_prop():
 
 
 def test_alias_doc():
-    alias_test = AliasTest()
+    alias_test_cls = _alias_tester()
+    alias_test = alias_test_cls()
     assert alias_test.my_alias.__doc__ == alias_test.prop.__doc__
     assert AliasTest.my_alias.__doc__ == f"Alias for {PROP_NAME}"
 
