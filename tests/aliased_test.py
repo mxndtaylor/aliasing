@@ -132,8 +132,9 @@ class TestAliased:
             @AliasedInnerClass.alias
             def method_class_alias(self): ...
 
-            @classmethod
+            # in python3.8 classmethod will break the alias descriptor too
             @AliasedInnerClass.alias
+            @classmethod
             def cls_method_class_alias(cls): ...
 
             # staticmethod breaks descriptors when placed after,
