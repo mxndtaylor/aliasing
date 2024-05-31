@@ -1,3 +1,5 @@
+from typing import List
+
 from aliasing.alias import alias, aliased
 
 PROP_NAME = "prop"
@@ -208,19 +210,9 @@ class TestAliased:
         tester = tester_cls()
         assert tester.PascalCaseMethod() == tester.aliased_val
 
-    def test_aliased_method_doc(self):
-        tester_cls = self._method_tester()
-        tester = tester_cls()
+    def _test_aliased_doc(self, tester: AliasedTester, alias_names: List[str]):
 
         alias_delimiter = ","
-
-        alias_names = [
-            "PascalCaseMethod",
-            "normal_alias",
-            "nested_alias",
-            # having this last one here ensures nested aliases are working
-            "alias_of_nested_alias",
-        ]
         start = "(aliases "
         end = ")"
         doc = tester.aliased_method.__doc__
@@ -229,11 +221,32 @@ class TestAliased:
         end_index = doc.find(end, len(start))
         assert end_index > len(start)
 
-        middle = doc[len(start) : end_index]
+        middle = doc[len(start):end_index]
         parsed_names = middle.split(alias_delimiter)
         assert len(parsed_names) == len(alias_names) and set(parsed_names) & set(
             alias_names
         ) == set(alias_names)
+
+    def test_aliased_method_doc(self):
+        tester_cls = self._method_tester()
+        tester = tester_cls()
+        alias_names = [
+            "PascalCaseMethod",
+            "normal_alias",
+        ]
+        self._test_aliased_doc(tester, alias_names)
+
+    def test_aliased_method_doc_with_nested(self):
+        tester_cls = self._nested_method_tester()
+        tester = tester_cls()
+        alias_names = [
+            "PascalCaseMethod",
+            "normal_alias",
+            "nested_alias",
+            # having this last one here ensures nested aliases are working
+            "alias_of_nested_alias",
+        ]
+        self._test_aliased_doc(tester, alias_names)
 
     def test_nested_alias(self):
         tester_cls = self._nested_method_tester()
