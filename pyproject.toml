@@ -22,7 +22,7 @@ excludes = ["**/example.py", "tests/*"]
 [tool.pdm.scripts]
 examples = "python -m aliasing.example"
 test = "pytest"
-coverage = {composite=["python -m coverage run -m tox --parallel", "python -m coverage html -d {args:html_cov}"]}
+coverage = {composite=["python -m coverage run -m tox -e 'py38,py39,py310,py311,py312' --parallel", "python -m coverage html -d {args:html_cov}"]}
 regression = "tox --parallel"
 fmt = "black"
 
