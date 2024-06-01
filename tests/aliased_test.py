@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Any
 
 import pytest
 
-from aliasing.alias import alias, aliased
+from aliasing import alias, aliased
 
 PROP_NAME = "prop"
 
@@ -27,7 +27,7 @@ class AliasedTester:
     def alias_of_nested_alias(self): ...
 
     class AliasedInnerClass:
-        prop: any
+        prop: Any
 
     class NormalClassAlias: ...
 
@@ -124,7 +124,10 @@ class TestAliased:
                     self.prop = prop
 
                 def __eq__(self, other):
-                    return isinstance(other, type(self)) and self.prop == other.prop
+                    return (
+                        isinstance(other, type(self))
+                        and self.prop == other.prop
+                    )
 
             @AliasedInnerClass.alias
             class NormalClassAlias: ...
@@ -219,16 +222,16 @@ class TestAliased:
         start = "(aliases "
         end = ")"
         doc = tester.aliased_method.__doc__
-        assert doc[: len(start)] == start
+        assert doc and doc[: len(start)] == start
 
         end_index = doc.find(end, len(start))
         assert end_index > len(start)
 
         middle = doc[len(start) : end_index]
         parsed_names = middle.split(alias_delimiter)
-        assert len(parsed_names) == len(alias_names) and set(parsed_names) & set(
-            alias_names
-        ) == set(alias_names)
+        assert len(parsed_names) == len(alias_names) and set(
+            parsed_names
+        ) & set(alias_names) == set(alias_names)
 
     def test_aliased_method_doc(self):
         tester_cls = self._method_tester()
@@ -292,7 +295,8 @@ class TestAliased:
             tester_cls.method_class_alias(val), tester_cls.AliasedInnerClass
         )
         assert isinstance(
-            tester_cls.cls_method_class_alias(val), tester_cls.AliasedInnerClass
+            tester_cls.cls_method_class_alias(val),
+            tester_cls.AliasedInnerClass,
         )
         assert isinstance(
             tester_cls.static_method_class_alias(val),
@@ -303,7 +307,8 @@ class TestAliased:
     def test_aliased_class_methods(cls):
         tester_cls = cls._class_tester()
         assert (
-            tester_cls.aliased_class_method() == tester_cls.aliased_class_method_alias()
+            tester_cls.aliased_class_method()
+            == tester_cls.aliased_class_method_alias()
         )
 
     @classmethod
@@ -338,6 +343,7 @@ def test_static_method_no_name_found():
     bad_alias_target = object()
 
     with pytest.raises(RuntimeError) as exc_info:
+
         class AliasTest:
             @aliased
             def method(self):
@@ -347,8 +353,10 @@ def test_static_method_no_name_found():
 
     error = exc_info.value
     assert isinstance(error, RuntimeError)
-    assert error.args[0] == (f"could not resolve alias name from non-None, non-str"
-                             f" member {bad_alias_target} without `__name__` attribute")
+    assert error.args[0] == (
+        f"could not resolve alias name from non-None, non-str"
+        f" member {bad_alias_target} without `__name__` attribute"
+    )
 
 
 def test_aliased_aliased():

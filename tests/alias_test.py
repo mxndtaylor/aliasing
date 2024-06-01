@@ -2,8 +2,12 @@ import warnings
 
 import pytest
 
-from aliasing.alias import alias
-from aliasing.error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
+from aliasing import (
+    alias,
+    CircularAliasError,
+    TrampleAliasError,
+    TrampleAliasWarning,
+)
 
 PROP_NAME = "prop"
 
@@ -41,7 +45,10 @@ def test_alias_set_prop():
     with pytest.raises(NotImplementedError) as exc_info:
         alias_test.my_alias = ""
 
-    assert exc_info.value.args[0] == "cannot set the value of read-only alias my_alias"
+    assert (
+        exc_info.value.args[0]
+        == "cannot set the value of read-only alias my_alias"
+    )
     assert alias_test.my_alias == alias_test.prop
 
 
