@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 import pytest
 
@@ -27,7 +27,7 @@ class AliasedTester:
     def alias_of_nested_alias(self): ...
 
     class AliasedInnerClass:
-        prop: any
+        prop: Any
 
     class NormalClassAlias: ...
 
@@ -222,7 +222,7 @@ class TestAliased:
         start = "(aliases "
         end = ")"
         doc = tester.aliased_method.__doc__
-        assert doc[: len(start)] == start
+        assert doc and doc[: len(start)] == start
 
         end_index = doc.find(end, len(start))
         assert end_index > len(start)

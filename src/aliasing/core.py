@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Optional, List
+from typing import Optional, List, Any, cast
 from warnings import warn
 
 from .error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
@@ -12,7 +12,7 @@ class alias:
         alias_name: Optional[str] = None,
         *,
         trample_ok: bool = False,
-        _aliased: "aliased" = None,
+        _aliased: Optional["aliased"] = None,
     ):
         self._for = alias_for
         # optionally provide name
@@ -41,20 +41,22 @@ class alias:
             return owner_type.__dict__[name]
         return None
 
-    def _validate_nested(self, owner, owner_type) -> any:
+    def _validate_nested(self, owner, owner_type) -> Any:
         # basic 2 ptrs
-        p1 = self._get_alias_obj(owner, owner_type, self._for)
+        p1: Any = self._get_alias_obj(owner, owner_type, self._for)
         p2 = self
 
         move_p2 = True
-        # p2 moves slower so p1 always resolves to first, if either do
         while isinstance(p1, alias):
             if p1 is p2:
                 raise CircularAliasError(
                     f"Nested alias {self._name} references a circular alias"
                 )
             p1 = self._get_alias_obj(owner, owner_type, p1._for)
-            p2 = (
+            # p2 moves slower so p1 always resolves to first, if either do
+            # meaning p2 always has type alias here
+            p2 = cast(
+                alias,
                 p2
                 if not move_p2
                 else self._get_alias_obj(owner, owner_type, p2._for)
@@ -93,7 +95,7 @@ class alias:
         )
 
     def attach(
-        self, owner, name: Optional[str] = None, *, trample_ok: bool = None
+        self, owner, name: Optional[str] = None, *, trample_ok: Optional[bool] = None
     ):
         trample_ok = trample_ok if trample_ok is not None else self._trample_ok
         name = name or self._name
@@ -136,16 +138,16 @@ class aliased:
         self._aliases: List[alias] = []
         self._original: aliased = self
 
-        name = ""
+        name: str = ""
 
         if isinstance(func, alias):
             aliased_: Optional[aliased] = getattr(func, "_aliased", None)
             if isinstance(aliased_, aliased):
-                self._original: aliased = aliased_._original
+                self._original = aliased_._original
             else:
                 name = getattr(func, "_for")
         elif isinstance(func, aliased):
-            self._original: aliased = func
+            self._original = func
 
         if self._original is not self:
             self._func = getattr(self._original, "_func")
@@ -157,7 +159,7 @@ class aliased:
         elif not name:
             name = func.__name__
 
-        self._name = name
+        self._name: str = name
         self._init_doc = func.__doc__
 
         self._private_name = ""
@@ -212,7 +214,7 @@ class aliased:
 
         return func
 
-    def alias(self, member: any = None, *, trample_ok: bool = None) -> alias:
+    def alias(self, member: Any = None, *, trample_ok: Optional[bool] = None) -> alias:
         name: Optional[str]
         if member is None:
             # rely on __set_name__ or attach to assign the name
@@ -234,7 +236,7 @@ class aliased:
             alias_for=self._original._name,
             alias_name=name,
             _aliased=self._original,
-            trample_ok=trample_ok,
+            trample_ok=bool(trample_ok),
         )
         self._aliases.append(new_alias)
         return new_alias

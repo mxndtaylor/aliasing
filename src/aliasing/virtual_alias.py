@@ -1,5 +1,5 @@
 import warnings
-from typing import List
+from typing import List, Optional
 
 from .core import aliased
 from .error import TrampleAliasWarning, TrampleAliasError
@@ -13,7 +13,7 @@ class valiased(aliased):
     during the __set_name__ phase
     """
 
-    def __init__(self, func, *aliases: str, trample_ok: List[str] = None):
+    def __init__(self, func, *aliases: str, trample_ok: Optional[List[str]] = None):
         super().__init__(func)
         trample_ok = trample_ok or []
         self._aliases = list(
@@ -62,7 +62,7 @@ class valiases:
         assert method() == a()
     """
 
-    def __init__(self, *aliases: str, trample_ok: List[str] = None):
+    def __init__(self, *aliases: str, trample_ok: Optional[List[str]] = None):
         self._aliases = aliases
         self._trample_ok = trample_ok
 
