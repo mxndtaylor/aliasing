@@ -34,7 +34,7 @@ examples = "python -m aliasing.example"
 test = "pytest"
 test-report = "pytest --junitxml=reports/junit/junit.xml --html=reports/junit/report.html"
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
-fmt = "black {args:.}"
+fmt = "black {args:src/}"
 lint = "flake8 {args:src/}"
 
 [tool.pdm.scripts.coverage]
