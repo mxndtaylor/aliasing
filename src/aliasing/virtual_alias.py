@@ -1,7 +1,8 @@
 import warnings
 from typing import List
 
-from . import aliased, TrampleAliasWarning, TrampleAliasError
+from .core import aliased
+from .error import TrampleAliasWarning, TrampleAliasError
 
 
 class valiased(aliased):

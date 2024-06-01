@@ -2,8 +2,8 @@ import warnings
 
 import pytest
 
-from aliasing.alias import alias
-from aliasing.error import (
+from aliasing import (
+    alias,
     CircularAliasError,
     TrampleAliasError,
     TrampleAliasWarning,

@@ -1,4 +1,4 @@
-from .alias import alias, aliased
+from .core import alias, aliased
 
 
 class Example:

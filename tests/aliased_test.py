@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 
-from aliasing.alias import alias, aliased
+from aliasing import alias, aliased
 
 PROP_NAME = "prop"
 
