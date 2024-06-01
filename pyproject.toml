@@ -1,31 +1,48 @@
 [project]
 name = "aliasing"
-version = "0.1.0"
+version = "0.2.0"
 description = "Default template for PDM package"
 authors = [
-    {name = "mxt", email = "mxnd.taylor@gmail.com"},
+    { name = "mxt", email = "mxnd.taylor@gmail.com" },
 ]
 requires-python = ">=3.8"
 readme = "README.md"
-license = {text = "MIT"}
+
+[project.license]
+text = "MIT"
 
 [build-system]
-requires = ["pdm-backend"]
+requires = [
+    "pdm-backend",
+]
 build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
 
 [tool.pdm.build]
-excludes = ["**/example.py", "tests/*"]
+excludes = [
+    "**/example.py",
+    "tests/*",
+]
 
 [tool.pdm.scripts]
 examples = "python -m aliasing.example"
 test = "pytest"
-coverage = {composite=["python -m coverage run -m pytest", "python -m coverage html"]}
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
-ci_test = {composite=["coverage", "regression"]}
 fmt = "black {args:.}"
+
+[tool.pdm.scripts.coverage]
+composite = [
+    "python -m coverage run -m pytest",
+    "python -m coverage html",
+]
+
+[tool.pdm.scripts.ci_test]
+composite = [
+    "coverage",
+    "regression",
+]
 
 [tool.pdm.dev-dependencies]
 dev = [
@@ -39,6 +56,6 @@ dev = [
 [tool.coverage.run]
 omit = [
     "tests/**",
-    "*test*"
+    "*test*",
 ]
 branch = true
