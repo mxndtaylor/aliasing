@@ -5,19 +5,17 @@ name: Python package
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "release/**" ]
   pull_request:
     branches: [ "develop" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
-        pdm-version: ["2.13.2"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
@@ -34,4 +32,16 @@ jobs:
       run: pdm coverage
     - name: Build with pdm
       run: pdm build
-    # TODO publish
+
+  pypi-publish:
+    if: startsWith(github.ref, 'refs/heads/release')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Publish package distributions to PyPI
+      run: pdm publish --no-build
