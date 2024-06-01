@@ -1,0 +1,88 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request_target:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies on ${{ matrix.python-version }}
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pdm
+        pdm sync --dev
+    - name: Test reports on ${{ matrix.python-version }}
+      run: pdm reports
+    - name: Build on ${{ matrix.python-version }}
+      run: pdm build
+  reports:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies on ${{ matrix.python-version }}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pdm
+          pdm sync --dev
+      - name: Test reports on ${{ matrix.python-version }}
+        run: pdm reports
+      - name: Update PR with reports
+        uses: actions/github-script@v7
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          # language=javascript
+          script: |
+            const fs = require('fs')
+
+            const test_content = fs.readFileSync('reports/junit/junit.xml', 'utf8')
+            const coverage_content = fs.readFileSync('reports/coverage/coverage.xml', 'utf8')
+            const flake8_content = fs.readFileSync('reports/flake8/stats.txt', 'utf8') 
+            
+            const test_details = `<details><summary>Test Report</summary>\n\n\`\`\`xml\n${test_content}\n\`\`\`\n\n</details>`
+            const coverage_details = `<details><summary>Coverage Report</summary>\n\n\`\`\`xml\n${coverage_content}\n\`\`\`\n\n</details>`
+            const flake8_details = `<details><summary>Flake8 Report</summary>\n\n\`\`\`\n${flake8_content}\n\`\`\`\n\n</details>`
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Reports:\n${test_details}\n${coverage_details}\n${flake8_details}`
+            })
+      - name: Build on ${{ matrix.python-version }}
+        run: pdm build
+      - name: Style
+        if: ${{ !cancelled() }}
+        run: pdm style
+      - name: Badges
+        if: ${{ !cancelled() }}
+        run: |
+          pdm badges-only
+          git config --global 'Auto'
+          git config --global 'mxndtaylor@users.noreply.github.com'
+          git commit -am "Update Badges"
+          git push

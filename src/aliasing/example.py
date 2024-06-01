@@ -1,4 +1,4 @@
-from .alias import alias, aliased
+from .core import alias, aliased
 
 
 class Example:
@@ -34,5 +34,7 @@ if __name__ == "__main__":
     print(example.method_alias1())
     print(example.method_alias2())
 
-    # includes method, method_alias1, method_alias2, my, my_alias, my_aliased, my_second_alias
+    # includes:
+    #   method, method_alias1, method_alias2,
+    #   my, my_alias, my_aliased, my_second_alias
     print(dir(example))

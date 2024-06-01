@@ -6,42 +6,40 @@ name: Python package
 on:
   push:
     branches: [ "release/**" ]
-  pull_request:
-    branches: [ "develop" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pdm
-        pdm sync --dev
-    - name: Test and get coverage report with pdm
-      run: pdm coverage
-    - name: Build with pdm
-      run: pdm build
-
   pypi-publish:
     if: startsWith(github.ref, 'refs/heads/release')
-    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-    strategy:
-      fail-fast: false
 
     steps:
+    - uses: actions/checkout@v4
+    - uses: pdm-project/setup-pdm@v3
+    - name: Build
+      run: pdm build
+    - name: Update git release tag
+      run: pdm bump tag
+    - name: Test and get reports
+      run: pdm reports
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        prerelease: false
+        draft: true
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        files: |
+        # build artifacts
+          dist/*
+        # badges
+          badges/*.svg
+        # reports
+          reports/junit/junit.xml
+          reports/coverage/coverage.xml
+          reports/flake8/stats.txt
+        # html reports
+          reports/junit/report.html
+          reports/coverage/html/index.html
+          reports/flake8/html/index.html
     - name: Publish package distributions to PyPI
       run: pdm publish --no-build
