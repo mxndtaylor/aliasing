@@ -55,7 +55,7 @@ composite = [
 composite = [
     "python -m coverage run -m pytest",
     "python -m coverage xml -o reports/coverage/coverage.xml",
-    "python -m coverage html -D reports/coverage/html",
+    "python -m coverage html -d reports/coverage/html",
 ]
 
 [tool.pdm.scripts.reports]
