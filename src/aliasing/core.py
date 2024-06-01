@@ -57,9 +57,11 @@ class alias:
             # meaning p2 always has type alias here
             p2 = cast(
                 alias,
-                p2
-                if not move_p2
-                else self._get_alias_obj(owner, owner_type, p2._for)
+                (
+                    p2
+                    if not move_p2
+                    else self._get_alias_obj(owner, owner_type, p2._for)
+                ),
             )
             move_p2 = not move_p2
         return p1
@@ -95,7 +97,11 @@ class alias:
         )
 
     def attach(
-        self, owner, name: Optional[str] = None, *, trample_ok: Optional[bool] = None
+        self,
+        owner,
+        name: Optional[str] = None,
+        *,
+        trample_ok: Optional[bool] = None,
     ):
         trample_ok = trample_ok if trample_ok is not None else self._trample_ok
         name = name or self._name
@@ -214,7 +220,9 @@ class aliased:
 
         return func
 
-    def alias(self, member: Any = None, *, trample_ok: Optional[bool] = None) -> alias:
+    def alias(
+        self, member: Any = None, *, trample_ok: Optional[bool] = None
+    ) -> alias:
         name: Optional[str]
         if member is None:
             # rely on __set_name__ or attach to assign the name

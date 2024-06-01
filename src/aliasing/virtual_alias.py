@@ -13,7 +13,9 @@ class valiased(aliased):
     during the __set_name__ phase
     """
 
-    def __init__(self, func, *aliases: str, trample_ok: Optional[List[str]] = None):
+    def __init__(
+        self, func, *aliases: str, trample_ok: Optional[List[str]] = None
+    ):
         super().__init__(func)
         trample_ok = trample_ok or []
         self._aliases = list(
