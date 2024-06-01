@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-    strategy:
-      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
