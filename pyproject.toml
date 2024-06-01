@@ -65,6 +65,14 @@ composite = [
     "lint-report",
 ]
 
+[tool.pdm.scripts.badges]
+composite = [
+    "reports",
+    "genbadge tests -o badges/tests.svg",
+    "genbadge coverage -o badges/coverage.svg",
+    "genbadge flake8 -i reports/flake8/stats.txt -o badges/flake8.svg",
+]
+
 [tool.pdm.dev-dependencies]
 dev = [
     "pytest>=8.2.1",
