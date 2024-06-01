@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:3800294a5414ee1159895dc4fafde7e685629e213d7605753053954dc8023bea"
+content_hash = "sha256:8b5113a706019e793f3b32842257af15ed5b55985edacc801b4bb5fe5eb35d7b"
 
 [[package]]
 name = "black"
@@ -608,6 +608,36 @@ dependencies = [
 files = [
     {file = "pytest-8.2.1-py3-none-any.whl", hash = "sha256:faccc5d332b8c3719f40283d0d44aa5cf101cec36f88cde9ed8f2bc0538612b1"},
     {file = "pytest-8.2.1.tar.gz", hash = "sha256:5046e5b46d8e4cac199c373041f26be56fdb81eb4e67dc11d4e10811fc3408fd"},
+]
+
+[[package]]
+name = "pytest-html"
+version = "4.1.1"
+requires_python = ">=3.8"
+summary = "pytest plugin for generating HTML reports"
+groups = ["dev"]
+dependencies = [
+    "jinja2>=3.0.0",
+    "pytest-metadata>=2.0.0",
+    "pytest>=7.0.0",
+]
+files = [
+    {file = "pytest_html-4.1.1-py3-none-any.whl", hash = "sha256:c8152cea03bd4e9bee6d525573b67bbc6622967b72b9628dda0ea3e2a0b5dd71"},
+    {file = "pytest_html-4.1.1.tar.gz", hash = "sha256:70a01e8ae5800f4a074b56a4cb1025c8f4f9b038bba5fe31e3c98eb996686f07"},
+]
+
+[[package]]
+name = "pytest-metadata"
+version = "3.1.1"
+requires_python = ">=3.8"
+summary = "pytest plugin for test session metadata"
+groups = ["dev"]
+dependencies = [
+    "pytest>=7.0.0",
+]
+files = [
+    {file = "pytest_metadata-3.1.1-py3-none-any.whl", hash = "sha256:c8e0844db684ee1c798cfa38908d20d67d0463ecb6137c72e91f418558dd5f4b"},
+    {file = "pytest_metadata-3.1.1.tar.gz", hash = "sha256:d2a29b0355fbc03f168aa96d41ff88b1a3b44a3b02acbe491801c98a048017c8"},
 ]
 
 [[package]]

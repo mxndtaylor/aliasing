@@ -32,6 +32,7 @@ excludes = [
 [tool.pdm.scripts]
 examples = "python -m aliasing.example"
 test = "pytest"
+test-report = "pytest --junitxml=reports/junit/junit.xml --html=reports/junit/report.html"
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
 fmt = "black {args:.}"
 lint = "flake8 {args:src/}"
@@ -58,6 +59,7 @@ dev = [
     "tox-pdm>=0.7.2",
     "genbadge[all]>=1.1.1",
     "flake8>=5.0.4",
+    "pytest-html>=4.1.1",
 ]
 
 [tool.coverage.run]
