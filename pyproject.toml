@@ -38,8 +38,9 @@ lint = "flake8 {args:src/}"
 
 [tool.pdm.scripts.coverage]
 composite = [
-    "python -m coverage run -m pytest",
-    "python -m coverage html",
+    "python -m coverage run -m pytest --junitxml=reports/junit/junit.xml --html=reports/junit/report.html",
+    "python -m coverage xml -o reports/coverage/coverage.xml",
+    "python -m coverage html -D reports/coverage/html",
 ]
 
 [tool.pdm.scripts.ci_test]
