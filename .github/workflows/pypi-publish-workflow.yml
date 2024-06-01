@@ -17,7 +17,29 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: pdm-project/setup-pdm@v3
-    - name: Test and get coverage report with pdm
-      run: pdm coverage
+    - name: Build
+      run: pdm build
+    - name: Update git release tag
+      run: pdm bump tag
+    - name: Test and get reports
+      run: pdm reports
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        prerelease: false
+        draft: true
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        files: |
+        # build artifacts
+          dist/*
+        # badges
+          badges/*.svg
+        # reports
+          reports/junit/junit.xml
+          reports/coverage/coverage.xml
+          reports/flake8/stats.txt
+        # html reports
+          reports/junit/report.html
+          reports/coverage/html/index.html
+          reports/flake8/html/index.html
     - name: Publish package distributions to PyPI
-      run: pdm publish
+      run: pdm publish --no-build
