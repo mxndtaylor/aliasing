@@ -29,15 +29,11 @@ jobs:
         draft: true
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
-        # build artifacts
           dist/*
-        # badges
           badges/*.svg
-        # reports
           reports/junit/junit.xml
           reports/coverage/coverage.xml
           reports/flake8/stats.txt
-        # html reports
           reports/junit/report.html
           reports/coverage/html/index.html
           reports/flake8/html/index.html
