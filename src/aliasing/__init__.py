@@ -1,6 +1,11 @@
-from .alias import *
-from .virtual_alias import *
-from .error import *
+from .alias import alias, aliased
+from .virtual_alias import valiased, valiases
+from .error import (
+    AliasError,
+    CircularAliasError,
+    TrampleAliasError,
+    TrampleAliasWarning,
+)
 
 __all__ = [
     "alias",
@@ -9,4 +14,6 @@ __all__ = [
     "valiases",
     "AliasError",
     "CircularAliasError",
+    "TrampleAliasError",
+    "TrampleAliasWarning",
 ]

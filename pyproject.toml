@@ -17,6 +17,9 @@ requires = [
 ]
 build-backend = "pdm.backend"
 
+[tool.black]
+line-length = 79
+
 [tool.pdm]
 distribution = true
 
@@ -31,6 +34,7 @@ examples = "python -m aliasing.example"
 test = "pytest"
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
 fmt = "black {args:.}"
+lint = "flake8 {args:src/}"
 
 [tool.pdm.scripts.coverage]
 composite = [
@@ -51,6 +55,8 @@ dev = [
     "coverage>=7.5.1",
     "tox>=4.15.0",
     "tox-pdm>=0.7.2",
+    "genbadge[all]>=1.1.1",
+    "flake8>=5.0.4",
 ]
 
 [tool.coverage.run]
