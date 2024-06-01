@@ -65,12 +65,17 @@ composite = [
     "lint-report",
 ]
 
-[tool.pdm.scripts.badges]
+[tool.pdm.scripts.badges-only]
 composite = [
-    "reports",
     "genbadge tests -o badges/tests.svg",
     "genbadge coverage -o badges/coverage.svg",
     "genbadge flake8 -i reports/flake8/stats.txt -o badges/flake8.svg",
+]
+
+[tool.pdm.scripts.badges]
+composite = [
+    "reports",
+    "badges-only",
 ]
 
 [tool.pdm.dev-dependencies]
