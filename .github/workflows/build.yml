@@ -86,10 +86,16 @@ jobs:
       - name: Badges
         if: ${{ !cancelled() }}
         run: |
-          pdm badges-only
+          echo "git updating..."
           git config --global user.name 'Auto'
           git config --global user.email 'mxndtaylor@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          echo "git checking out..."
           git checkout "${GITHUB_REF:11}"
+          echo "making badges..."
+          pdm badges-only
+          echo "git committing..."
           git commit -am "Update Badges"
+          echo "git pusshing..."
           git push
+          echo "done"
