@@ -6,7 +6,6 @@ on:
 
 jobs:
   pypi-publish:
-    if: startsWith(github.ref, 'refs/heads/release')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
