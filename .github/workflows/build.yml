@@ -33,6 +33,11 @@ jobs:
     - name: Build on ${{ matrix.python-version }}
       run: pdm build
   reports:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
     runs-on: ubuntu-latest
     strategy:
       matrix:
