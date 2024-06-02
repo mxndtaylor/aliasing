@@ -82,13 +82,21 @@ jobs:
         if: ${{ !cancelled() }}
         run: pdm style
       - name: Badges
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
         run: |
           git config --global user.name 'Auto'
           git config --global user.email 'mxndtaylor@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git fetch origin "${GITHUB_HEAD_REF}"
           git checkout "${GITHUB_HEAD_REF}"
+          pdm badges-only
+          git commit -am "Update Badges"
+          git push
+      - name: Badges
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        run: |
+          git config --global user.name 'Auto'
+          git config --global user.email 'mxndtaylor@users.noreply.github.com'
           pdm badges-only
           git commit -am "Update Badges"
           git push
