@@ -1,6 +1,6 @@
 [project]
 name = "aliasing"
-version = "0.2.1a1"
+version = "0.3.0a1"
 description = "Default template for PDM package"
 authors = [
     { name = "mxt", email = "mxnd.taylor@gmail.com" },
@@ -37,7 +37,9 @@ regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
 fmt = "black {args:src/}"
 lint = "flake8 {args:src/}"
 typing = "mypy {args:src/}"
-badges-timestamp = {shell="date -u > badges/timestamp.txt"}
+
+[tool.pdm.scripts.badges-timestamp]
+shell = "date -u > badges/timestamp.txt"
 
 [tool.pdm.scripts.style]
 composite = [
@@ -71,7 +73,7 @@ composite = [
     "genbadge tests -o badges/tests.svg",
     "genbadge coverage -o badges/coverage.svg",
     "genbadge flake8 -i reports/flake8/stats.txt -o badges/flake8.svg",
-    "badges-timestamp"
+    "badges-timestamp",
 ]
 
 [tool.pdm.scripts.badges]
