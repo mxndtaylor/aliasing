@@ -41,16 +41,5 @@ jobs:
           reports/junit/report.html
           reports/coverage/html/index.html
           reports/flake8/html/index.html
-    - name: Check Version Format
-      if: ${{ startsWith(steps.gh-release.outputs.automatic_releases_tag, 'v') }}
-      id: check-version
-      run: |
-        if [[ ${{ steps.gh-release.outputs.automatic_releases_tag }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "version-type=release" >> $GITHUB_OUTPUT
-        else
-            echo "version-type=pre-release" >> $GITHUB_OUTPUT
-        fi
     - name: Publish package distributions to PyPI
-      # only run if it's not alpha, beta or a release candidate
-      if: ${{ steps.check-version.outputs.version-type == 'release' }}
       run: pdm publish --no-build
