@@ -43,5 +43,4 @@ jobs:
           reports/coverage/html/*
           reports/flake8/html/*
     - name: Publish package distributions to PyPI
-      if: ${{ ! cancelled() && success() }}
       run: pdm publish --no-build
