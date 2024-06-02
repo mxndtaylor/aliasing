@@ -92,11 +92,3 @@ jobs:
           pdm badges-only
           git commit -am "Update Badges"
           git push
-      - name: Badges
-        if: ${{ !cancelled() && github.event_name == 'push' }}
-        run: |
-          git config --global user.name 'Auto'
-          git config --global user.email 'mxndtaylor@users.noreply.github.com'
-          pdm badges-only
-          git commit -am "Update Badges"
-          git push
