@@ -1,40 +1,103 @@
 [project]
-name = "py-aliasing"
-version = "0.1.0"
+name = "aliasing"
+version = "0.3.0a1"
 description = "Default template for PDM package"
 authors = [
-    {name = "mxt", email = "mxnd.taylor@gmail.com"},
+    { name = "mxt", email = "mxnd.taylor@gmail.com" },
 ]
-dependencies = []
-requires-python = "==3.11.*"
+requires-python = ">=3.8"
 readme = "README.md"
-license = {text = "MIT"}
+
+[project.license]
+text = "MIT"
 
 [build-system]
-requires = ["pdm-backend"]
+requires = [
+    "pdm-backend",
+]
 build-backend = "pdm.backend"
+
+[tool.black]
+line-length = 79
 
 [tool.pdm]
 distribution = true
 
 [tool.pdm.build]
-excludes = ["**/example.py", "tests/*"]
+excludes = [
+    "**/example.py",
+    "tests/*",
+]
 
 [tool.pdm.scripts]
-examples = "python -m py_aliasing.example"
+examples = "python -m aliasing.example"
 test = "pytest"
-coverage = {composite=["python -m coverage run -m pytest", "python -m coverage html"]}
-fmt = "black"
+test-report = "pytest --junitxml=reports/junit/junit.xml --html=reports/junit/report.html"
+regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
+fmt = "black {args:src/}"
+lint = "flake8 {args:src/}"
+typing = "mypy {args:src/}"
+
+[tool.pdm.scripts.badges-timestamp]
+shell = "date -u > badges/timestamp.txt"
+
+[tool.pdm.scripts.style]
+composite = [
+    "typing",
+    "fmt",
+    "lint",
+]
+
+[tool.pdm.scripts.lint-report]
+composite = [
+    "mkdir -p reports/flake8",
+    "lint src/ --exit-zero --format=html --htmldir reports/flake8/html --statistics --output-file reports/flake8/stats.txt",
+]
+
+[tool.pdm.scripts.coverage]
+composite = [
+    "python -m coverage run -m pytest",
+    "python -m coverage xml -o reports/coverage/coverage.xml",
+    "python -m coverage html -d reports/coverage/html",
+]
+
+[tool.pdm.scripts.reports]
+composite = [
+    "test-report",
+    "coverage",
+    "lint-report",
+]
+
+[tool.pdm.scripts.badges-only]
+composite = [
+    "genbadge tests -o badges/tests.svg",
+    "genbadge coverage -o badges/coverage.svg",
+    "genbadge flake8 -i reports/flake8/stats.txt -o badges/flake8.svg",
+    "badges-timestamp",
+]
+
+[tool.pdm.scripts.badges]
+composite = [
+    "reports",
+    "badges-only",
+]
 
 [tool.pdm.dev-dependencies]
 dev = [
     "pytest>=8.2.1",
     "black>=24.4.2",
     "coverage>=7.5.1",
+    "tox>=4.15.0",
+    "tox-pdm>=0.7.2",
+    "genbadge[all]>=1.1.1",
+    "flake8>=5.0.4",
+    "pytest-html>=4.1.1",
+    "mypy>=1.10.0",
 ]
 
 [tool.coverage.run]
 omit = [
     "tests/**",
-    "*test*"
+    "*test*",
 ]
+branch = true

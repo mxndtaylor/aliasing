@@ -1,0 +1,45 @@
+name: Publish release
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  pypi-publish:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pdm-project/setup-pdm@v3
+    - name: Build
+      run: pdm build
+    - name: Update git release tag
+      run: |
+        git config --global user.name 'Auto'
+        git config --global user.email 'mxndtaylor@users.noreply.github.com'
+        pdm bump tag
+        git push --tags
+    - name: Test and get reports
+      run: pdm reports
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      id: gh-release
+      with:
+        prerelease: false
+        draft: true
+        automatic_release_tag: latest
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        files: |
+          dist/*
+          badges/*.svg
+          reports/junit/junit.xml
+          reports/coverage/coverage.xml
+          reports/flake8/stats.txt
+          reports/junit/report.html
+          reports/coverage/html/*
+          reports/flake8/html/*
+    - name: Publish package distributions to PyPI
+      run: pdm publish --no-build
