@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
@@ -20,7 +21,11 @@ jobs:
     - name: Build
       run: pdm build
     - name: Update git release tag
-      run: pdm bump tag
+      run: |
+        git config --global user.name 'Auto'
+        git config --global user.email 'mxndtaylor@users.noreply.github.com'
+        pdm bump tag
+        git push --tags
     - name: Test and get reports
       run: pdm reports
     - uses: "marvinpinto/action-automatic-releases@latest"
