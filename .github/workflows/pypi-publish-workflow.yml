@@ -19,6 +19,7 @@ jobs:
       run: pdm build
     - name: Update git release tag
       run: |
+        python3 -m pip install pdm-bump
         git config --global user.name 'Auto'
         git config --global user.email 'mxndtaylor@users.noreply.github.com'
         pdm bump tag
