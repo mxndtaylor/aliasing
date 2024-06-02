@@ -37,7 +37,7 @@ regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
 fmt = "black {args:src/}"
 lint = "flake8 {args:src/}"
 typing = "mypy {args:src/}"
-timestamp = {cmd="date +%s"}
+timestamp = {cmd="date -u"}
 
 [tool.pdm.scripts.style]
 composite = [
