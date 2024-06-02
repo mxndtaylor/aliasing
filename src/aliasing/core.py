@@ -121,15 +121,15 @@ class alias:
             )
             if trample_ok:
                 message += (
-                    f" Overriding with alias for {self._for}."
-                    f" Pass `trample_ok=False` to disallow this behavior."
+                    f" Overriding with alias for {self._for}. Pass"
+                    " `trample_ok=False` to disallow this behavior."
                 )
                 warn(message, TrampleAliasWarning)
             else:
                 message += (
-                    f" Cannot override it with alias for {self._for}"
-                    f" by default, pass `trample_ok=True` to override"
-                    f" the member anyway."
+                    f" Cannot override it with alias for {self._for} by"
+                    " default, pass `trample_ok=True` to override the member"
+                    " anyway."
                 )
                 raise TrampleAliasError(message)
         setattr(cls, name, self)
@@ -238,8 +238,9 @@ class aliased:
             name = member.__func__.__name__
         else:
             raise RuntimeError(
-                f"could not resolve alias name from non-None, non-str member"
-                f" {member} without `__name__` attribute"
+                "could not resolve alias name from non-None, non-str member"
+                f" {member} without "
+                "`__name__` attribute"
             )
 
         new_alias = alias(

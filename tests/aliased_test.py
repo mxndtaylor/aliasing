@@ -354,8 +354,8 @@ def test_static_method_no_name_found():
     error = exc_info.value
     assert isinstance(error, RuntimeError)
     assert error.args[0] == (
-        f"could not resolve alias name from non-None, non-str"
-        f" member {bad_alias_target} without `__name__` attribute"
+        "could not resolve alias name from non-None, non-str"
+        " member {bad_alias_target} without `__name__` attribute"
     )
 
 

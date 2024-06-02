@@ -113,7 +113,7 @@ def test_alias_trample_on_attach_err():
     assert exc_info.value.args[0] == (
         f"Owner class {AliasAttachTest.__name__} already has member with name"
         f" {alias_name}. Cannot override it with alias for {PROP_NAME} by default,"
-        f" pass `trample_ok=True` to override the member anyway."
+        " pass `trample_ok=True` to override the member anyway."
     )
 
 
@@ -135,8 +135,8 @@ def test_alias_trample_on_attach_warning():
         assert issubclass(w[-1].category, TrampleAliasWarning)
         assert str(w[-1].message) == (
             f"Owner class {AliasAttachTest.__name__} already has member with name"
-            f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass `trample_ok=False`"
-            f" to disallow this behavior."
+            f" {alias_name}. Overriding with alias for {PROP_NAME}. Pass"
+            " `trample_ok=False` to disallow this behavior."
         )
 
 

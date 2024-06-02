@@ -58,7 +58,7 @@ def test_valias_trample_warning():
             f"Owner class {WarningTest.__name__} already has member with name"
             f" {WarningTest.method2.__name__}. Overriding with alias for"
             f" {WarningTest.method1.__name__}. Remove '{WarningTest.method2.__name__}'"
-            f" from the `trample_ok` list parameter to disallow this behavior."
+            " from the `trample_ok` list parameter to disallow this behavior."
         )
 
 
@@ -78,9 +78,8 @@ def test_valias_trample_err():
 
     assert isinstance(trample_error, TrampleAliasError)
     assert trample_error.args[0] == (
-        f"Owner class ErrorTest already has member with name"
-        f" method2. Cannot override it with alias for"
-        f" method1 by default, pass"
-        f" `trample_ok=['method2']` to override the member"
-        f" anyway."
+        "Owner class ErrorTest already has member with name"
+        " method2. Cannot override it with alias for"
+        " method1 by default, pass `trample_ok=['method2']` to override "
+        "the member anyway."
     )
