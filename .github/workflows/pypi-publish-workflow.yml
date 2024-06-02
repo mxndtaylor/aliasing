@@ -2,11 +2,12 @@ name: Publish release
 
 on:
   push:
-    branches: [ "release/**" ]
+    branches: [ "main" ]
 
 jobs:
   pypi-publish:
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       id-token: write
       contents: write
