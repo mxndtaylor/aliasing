@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from .core import aliased
 from .error import TrampleAliasWarning, TrampleAliasError
@@ -14,7 +14,7 @@ class valiased(aliased):
     """
 
     def __init__(
-        self, func, *aliases: str, trample_ok: Optional[List[str]] = None
+        self, func: Any, *aliases: str, trample_ok: Optional[List[str]] = None
     ):
         super().__init__(func)
         trample_ok = trample_ok or []
@@ -25,7 +25,7 @@ class valiased(aliased):
             )
         )
 
-    def __set_name__(self, owner, name):
+    def __set_name__(self, owner: Any, name: str) -> None:
         super().__set_name__(owner, name)
         is_warn = is_err = False
         msg = ""
@@ -68,5 +68,5 @@ class valiases:
         self._aliases = aliases
         self._trample_ok = trample_ok
 
-    def __call__(self, func):
+    def __call__(self, func: Any) -> valiased:
         return valiased(func, *self._aliases, trample_ok=self._trample_ok)

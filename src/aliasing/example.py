@@ -1,3 +1,5 @@
+from typing import Any
+
 from .core import alias, aliased
 
 
@@ -8,17 +10,17 @@ class Example:
 
     my_second_alias = my_aliased.alias()
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.my = 123
 
     @aliased
-    def method(self):
+    def method(self) -> str:
         return "my method call"
 
     method_alias1 = method.alias()
 
     @method.alias
-    def method_alias2(self): ...
+    def method_alias2(self) -> Any: ...
 
 
 if __name__ == "__main__":

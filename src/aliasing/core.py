@@ -22,26 +22,28 @@ class alias:
         self._aliased = _aliased
         self._trample_ok = trample_ok
 
-    def __set_name__(self, owner, name):
+    def __set_name__(self, owner: Any, name: str) -> None:
         self._name = name
 
     @staticmethod
-    def _get_alias_obj(owner, owner_type, name) -> Optional["alias"]:
+    def _get_alias_obj(
+        owner: Any, owner_type: Any, name: str
+    ) -> Optional["alias"]:
         if (
             owner
             and hasattr(owner, "__dict__")
             and isinstance(owner.__dict__.get(name, None), alias)
         ):
-            return owner.__dict__[name]
+            return cast(alias, owner.__dict__[name])
         elif (
             owner_type
             and hasattr(owner_type, "__dict__")
             and isinstance(owner_type.__dict__.get(name, None), alias)
         ):
-            return owner_type.__dict__[name]
+            return cast(alias, owner_type.__dict__[name])
         return None
 
-    def _validate_nested(self, owner, owner_type) -> Any:
+    def _validate_nested(self, owner: Any, owner_type: Any) -> Any:
         # basic 2 ptrs
         p1: Any = self._get_alias_obj(owner, owner_type, self._for)
         p2 = self
@@ -66,7 +68,7 @@ class alias:
             move_p2 = not move_p2
         return p1
 
-    def __get__(self, owner, owner_type=None):
+    def __get__(self, owner: Any, owner_type: Any = None) -> Any:
         value = None
         if isinstance(
             self._get_alias_obj(owner, owner_type, self._for), alias
@@ -91,18 +93,18 @@ class alias:
 
         return value
 
-    def __set__(self, owner, value):
+    def __set__(self, owner: Any, value: Any) -> None:
         raise NotImplementedError(
             f"cannot set the value of read-only alias {self._name}"
         )
 
     def attach(
         self,
-        owner,
+        owner: Any,
         name: Optional[str] = None,
         *,
         trample_ok: Optional[bool] = None,
-    ):
+    ) -> None:
         trample_ok = trample_ok if trample_ok is not None else self._trample_ok
         name = name or self._name
         if not name:
@@ -139,7 +141,7 @@ class alias:
 
 
 class aliased:
-    def __init__(self, func):
+    def __init__(self, func: Any):
         self._func = func
         self._aliases: List[alias] = []
         self._original: aliased = self
@@ -175,7 +177,7 @@ class aliased:
         self._doc = self._init_doc
         self._refresh_doc()
 
-    def _refresh_doc(self):
+    def _refresh_doc(self) -> None:
         alias_list = ",".join(
             filter(
                 None, map(lambda a: getattr(a, "_name", None), self._aliases)
@@ -189,17 +191,17 @@ class aliased:
         )
         self.__doc__ = self._doc
 
-    def _refresh_name(self, name: Optional[str] = None):
+    def _refresh_name(self, name: Optional[str] = None) -> None:
         self._name = name or self._name
         self._private_name = f"_aliased_{self._name}"
 
-    def __set_name__(self, owner, name: str):
+    def __set_name__(self, owner: Any, name: str) -> None:
         self._refresh_name(name)
         func = self._func
         self._init_doc = func.__doc__
         setattr(owner, self._private_name, func)
 
-    def __get__(self, owner, owner_type=None):
+    def __get__(self, owner: Any, owner_type: Any = None) -> Any:
         self._refresh_doc()
         if owner is None:
             try:
@@ -212,7 +214,7 @@ class aliased:
         if callable(func):
 
             @wraps(func)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 
             wrapper.__doc__ = self._doc
