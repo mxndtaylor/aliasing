@@ -61,11 +61,15 @@ composite = [
     "python -m coverage html -d reports/coverage/html",
 ]
 
+[tool.pdm.scripts.compile-reports]
+shell = "tar -czvf dist/\"$( pdm show --name )-$( pdm show --version )-reports.tar.gz\" -C ./reports ."
+
 [tool.pdm.scripts.reports]
 composite = [
     "test-report",
     "coverage",
     "lint-report",
+    "compile-reports",
 ]
 
 [tool.pdm.scripts.badges-only]

@@ -38,11 +38,5 @@ jobs:
         files: |
           dist/*
           badges/*.svg
-          reports/junit/junit.xml
-          reports/coverage/coverage.xml
-          reports/flake8/stats.txt
-          reports/junit/report.html
-          reports/coverage/html/*
-          reports/flake8/html/*
     - name: Publish package distributions to PyPI
       run: pdm publish --no-build
