@@ -62,7 +62,7 @@ composite = [
 ]
 
 [tool.pdm.scripts.compile-reports]
-shell = "mkdir -p dist && tar -czvf dist/reports.tar.gz\" -C ./reports ."
+shell = "mkdir -p dist && tar -czvf dist/reports.tar.gz -C ./reports ."
 
 [tool.pdm.scripts.reports]
 composite = [
