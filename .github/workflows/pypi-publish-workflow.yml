@@ -27,7 +27,7 @@ jobs:
         git config --global user.name 'Auto'
         git config --global user.email 'mxndtaylor@users.noreply.github.com'
         pdm bump tag && git push --tags
-        tag=$( pdm show --version )
+        tag=v$( pdm show --version )
         tag_is_full_release=$( [[ "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+\$ ]] && echo 'TRUE' || echo 'FALSE' )
         echo "tag=${tag}" >> "$GITHUB_OUTPUT"
         echo "full-release=${tag_is_full_release}"
