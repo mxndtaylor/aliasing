@@ -27,6 +27,12 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[project.urls]
+Homepage = "https://github.com/mxndtaylor/aliasing"
+#Documentation = "https://mxndtaylor.github.io/aliasing"
+Source = "https://github.com/mxndtaylor/aliasing"
+#Changelog = "https://mxndtaylor.github.io/aliasing/changelog"
+
 [project.license]
 text = "MIT"
 
