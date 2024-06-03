@@ -32,8 +32,6 @@ jobs:
       id: gh-release
       with:
         prerelease: false
-        draft: true
-        automatic_release_tag: latest
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
           dist/*
