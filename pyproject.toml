@@ -1,6 +1,6 @@
 [project]
 name = "aliasing"
-version = "0.3.0a1"
+version = "0.3.0a2"
 description = "Default template for PDM package"
 authors = [
     { name = "mxt", email = "mxnd.taylor@gmail.com" },
@@ -62,7 +62,7 @@ composite = [
 ]
 
 [tool.pdm.scripts.compile-reports]
-shell = "mkdir -p dist && tar -czvf dist/\"$( pdm show --name )-$( pdm show --version )-reports.tar.gz\" -C ./reports ."
+shell = "mkdir -p dist && tar -czvf dist/reports.tar.gz -C ./reports ."
 
 [tool.pdm.scripts.reports]
 composite = [
