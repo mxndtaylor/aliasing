@@ -43,4 +43,6 @@ jobs:
           dist/*
           badges/*.svg
     - name: Publish package distributions to PyPI
-      run: pdm publish --no-build
+      run: |
+        rm dist/reports.tar.gz
+        pdm publish --no-build
