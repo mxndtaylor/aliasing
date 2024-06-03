@@ -28,7 +28,7 @@ jobs:
         git config --global user.email 'mxndtaylor@users.noreply.github.com'
         pdm bump tag && git push --tags
         tag=$( pdm show --version )
-        tag_is_full_release=$( test "${tag}" "=~" "^v[0-9]+.[0-9]+.[0-9]+\$" && "TRUE" || "FALSE" )
+        tag_is_full_release=$( test "${tag}" "=~" "^v[0-9]+.[0-9]+.[0-9]+\$" && echo 'TRUE' || echo 'FALSE' )
         echo "tag=${tag}" >> "$GITHUB_OUTPUT"
         echo "full-release=${tag_is_full_release}"
     - name: Test and get reports
@@ -36,7 +36,7 @@ jobs:
     - uses: "marvinpinto/action-automatic-releases@latest"
       id: gh-release
       with:
-        prerelease: ${{ ! steps.tagger.full-release }}
+        prerelease: ${{ steps.tagger.full-release == 'FALSE' }}
         automatic_release_tag: ${{ steps.tagger.tag }}
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
