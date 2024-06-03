@@ -22,16 +22,19 @@ jobs:
     - name: Build
       run: pdm build
     - name: Update git release tag
+      id: tagger
       run: |
         git config --global user.name 'Auto'
         git config --global user.email 'mxndtaylor@users.noreply.github.com'
         pdm bump tag && git push --tags
+        echo "tag=$( pdm show --version )" >> "$GITHUB_OUTPUT"
     - name: Test and get reports
       run: pdm reports
     - uses: "marvinpinto/action-automatic-releases@latest"
       id: gh-release
       with:
         prerelease: false
+        automatic_release_tag: ${{ steps.tagger.tag }}
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
           dist/*
