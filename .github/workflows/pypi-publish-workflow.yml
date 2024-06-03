@@ -36,8 +36,8 @@ jobs:
     - uses: "marvinpinto/action-automatic-releases@latest"
       id: gh-release
       with:
-        prerelease: ${{ steps.tagger.full-release == 'FALSE' }}
-        automatic_release_tag: ${{ steps.tagger.tag }}
+        prerelease: ${{ steps.tagger.outputs.full-release == 'FALSE' }}
+        automatic_release_tag: ${{ steps.tagger.outputs.tag }}
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
           dist/*
