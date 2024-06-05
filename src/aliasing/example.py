@@ -25,6 +25,9 @@ class Example:
 
 if __name__ == "__main__":
     example = Example()
+    print(example.method.__code__ is example.method_alias2.__code__)
+    print(example.method.__code__ is example.method_alias1.__code__)
+
     # all of these are 123
     print(example.my)
     print(example.my_alias)
