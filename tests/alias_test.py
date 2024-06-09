@@ -103,8 +103,8 @@ def test_alias_attach_to_instance_no_second_dynamic_class():
         pass
 
     alias_test = AliasAttachTest()
-    aka1 = alias(PROP_NAME)
-    aka2 = alias(PROP_NAME)
+    aka1 = alias(PROP_NAME, "name1")
+    aka2 = alias(PROP_NAME, "name2")
     aka1.attach(alias_test)
     first_dynamic_class = type(alias_test)
     aka2.attach(alias_test)
