@@ -129,10 +129,19 @@ class alias:
 
         # hash and compare so we minimize the number of classes created here
         instance_hash = hash(instance)
-        hash_key = "_aliasing_instance_hash"
-        if not hasattr(cls, hash_key) or getattr(cls, hash_key, None) != instance_hash:
+        class_hash = hash(cls)
+        instance_hash_key = "_aliasing_instance_hash"
+        class_hash_key = "_aliasing_class_hash"
+        if (not hasattr(cls, instance_hash_key)
+                or getattr(cls, instance_hash_key, None) != instance_hash
+                or not hasattr(cls, class_hash_key)
+                or getattr(cls, class_hash_key, None) != class_hash):
             # dynamically create a new class that only this instance will use
-            tmp_class = type(cls.__name__, (cls,), {hash_key: instance_hash})
+            tmp_class = type(cls.__name__, (cls,), {
+                instance_hash_key: instance_hash,
+                class_hash_key: class_hash,
+            })
+            tmp_class.__doc__ = f""" class for aliasing '{self._for}' under `{self._name}`"""
             # I don't like modifying the class of the instance like this
             # but as long as the end user is using 'isinstance' instead of direct class
             # comparisons it should be okay.
