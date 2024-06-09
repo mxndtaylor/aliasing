@@ -116,6 +116,14 @@ def test_alias_attach_name_on_attach():
     assert getattr(alias_test, "my_second_attached_alias") == alias_test.prop
 
 
+def test_alias_attach_no_owner_err():
+    my_alias = alias(PROP_NAME)
+    with pytest.raises(RuntimeError) as exc_info:
+        my_alias.attach(None)
+
+    assert exc_info.value.args[0] == "cannot attach alias to None"
+
+
 def test_alias_trample_on_attach_err():
     class AliasAttachTest:
         def __init__(self):

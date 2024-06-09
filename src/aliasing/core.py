@@ -164,7 +164,7 @@ class alias:
         trample_ok: Optional[bool] = None,
     ) -> None:
         if owner is None:
-            raise RuntimeError("cannot attach an alias to None")
+            raise RuntimeError("cannot attach alias to None")
 
         name = name or self._name
         if not name:
