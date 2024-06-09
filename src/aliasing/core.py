@@ -125,7 +125,7 @@ class alias:
         self.__set_name__(cls, name)
 
     def __attach_instance(self, instance: Any, name: str, *, trample_ok: bool = None):
-        cls = instance.__class__
+        cls = type(instance)
 
         # hash and compare so we minimize the number of classes created here
         instance_hash = hash(instance)
