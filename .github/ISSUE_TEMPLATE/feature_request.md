@@ -21,7 +21,7 @@ use 'example' to reference some property on the object**
 A clear and concise description of what you want to happen.
 
 ## Describe alternatives you've considered
-**modules you've tried or what existing features you tried to emulate the requested feature with**
+**libraries/modules, techniques or existing features you've used to try and emulate the requested feature**
 
 A clear and concise description of any alternative solutions or features you've considered.
 
