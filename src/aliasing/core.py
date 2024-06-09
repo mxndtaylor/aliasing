@@ -132,8 +132,7 @@ class alias:
         hash_key = "_aliasing_instance_hash"
         if not hasattr(cls, hash_key) or getattr(cls, hash_key, None) != instance_hash:
             # dynamically create a new class that only this instance will use
-            tmp_class = type(f"_{name.capitalize()}Alias_" + cls.__name__, (cls,), {})
-            setattr(tmp_class, hash_key, instance_hash)
+            tmp_class = type(cls.__name__, (cls,), {hash_key: instance_hash})
             # I don't like modifying the class of the instance like this
             # but as long as the end user is using 'isinstance' instead of direct class
             # comparisons it should be okay.
