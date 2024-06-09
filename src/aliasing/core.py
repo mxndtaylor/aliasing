@@ -132,9 +132,12 @@ class alias:
         class_hash = hash(cls)
         instance_hash_key = "_aliasing_instance_hash"
         class_hash_key = "_aliasing_class_hash"
+        if hasattr(cls, class_hash_key):
+            class_hash = hash(cls.__base__)
+
         if (not hasattr(cls, instance_hash_key)
-                or getattr(cls, instance_hash_key, None) != instance_hash
                 or not hasattr(cls, class_hash_key)
+                or getattr(cls, instance_hash_key, None) != instance_hash
                 or getattr(cls, class_hash_key, None) != class_hash):
             # dynamically create a new class that only this instance will use
             tmp_class = type(cls.__name__, (cls,), {
