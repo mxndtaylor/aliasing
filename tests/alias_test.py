@@ -91,6 +91,29 @@ def test_alias_attach_to_class_non_isolated():
     assert hasattr(AliasAttachTest, alias_name) and my_alias in AliasAttachTest.__dict__.values()
 
 
+def test_alias_attach_to_instance_no_second_dynamic_class():
+    """
+    given instance object of class A "a"
+    when attach alias to "a"
+    then "a" has dynamically generated class
+    when attach 2nd alias to "a"
+    then "a" should still have original dynamically generated class
+    """
+    class AliasAttachTest:
+        pass
+
+    alias_test = AliasAttachTest()
+    aka1 = alias(PROP_NAME)
+    aka2 = alias(PROP_NAME)
+    aka1.attach(alias_test)
+    first_dynamic_class = type(alias_test)
+    aka2.attach(alias_test)
+    second_dynamic_class = type(alias_test)
+
+    assert first_dynamic_class is second_dynamic_class
+    assert AliasAttachTest is not first_dynamic_class
+
+
 def test_alias_attach_err():
     class AliasAttachTest:
         def __init__(self):
