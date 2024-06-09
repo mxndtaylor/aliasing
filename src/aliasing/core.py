@@ -134,9 +134,18 @@ class alias:
             # dynamically create a new class that only this instance will use
             tmp_class = type(f"_{name.capitalize()}Alias_" + cls.__name__, (cls,), {})
             setattr(tmp_class, hash_key, instance_hash)
+            # I don't like modifying the class of the instance like this
+            # but as long as the end user is using 'isinstance' instead of direct class
+            # comparisons it should be okay.
             instance.__class__ = tmp_class
             cls = tmp_class
 
+        # we attach here instead of during the dynamic class creation because
+        # we follow same attachment process no matter what:
+        # - attach to class
+        # - attach to instance with new tmp class
+        # - attach to instance with existing tmp class
+        # all use same attachment process
         self.__attach_class(cls, name, trample_ok=trample_ok)
 
     def attach(
