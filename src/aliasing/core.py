@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Optional, List, Any, cast
+from typing import Optional, List, Any, cast, Type
 from warnings import warn
 
 from .error import CircularAliasError, TrampleAliasError, TrampleAliasWarning
@@ -98,22 +98,7 @@ class alias:
             f"cannot set the value of read-only alias {self._name}"
         )
 
-    def attach(
-        self,
-        owner: Any,
-        name: Optional[str] = None,
-        *,
-        trample_ok: Optional[bool] = None,
-    ) -> None:
-        trample_ok = trample_ok if trample_ok is not None else self._trample_ok
-        name = name or self._name
-        if not name:
-            raise RuntimeError("must provide name to attach alias")
-        cls = owner
-        if type(cls) is not type:
-            # we have to attach the descriptor to the class, not the instance
-            # this way we support both
-            cls = type(cls)
+    def __attach_class(self, cls: Type[Any], name: str, *, trample_ok: bool = None):
         if hasattr(cls, name):
             message = (
                 f"Owner class {cls.__name__}"
@@ -137,7 +122,44 @@ class alias:
         # typical descriptor workflow. In this class's current implementation,
         # the statement has no effect, but in the future it might have one
         # or consumer child classes might add functionality to __set_name__
-        self.__set_name__(owner, name)
+        self.__set_name__(cls, name)
+
+    def __attach_instance(self, instance: Any, name: str, *, trample_ok: bool = None):
+        cls = instance.__class__
+
+        # hash and compare so we minimize the number of classes created here
+        instance_hash = hash(instance)
+        hash_key = "_aliasing_instance_hash"
+        if not hasattr(cls, hash_key) or getattr(cls, hash_key, None) != instance_hash:
+            # dynamically create a new class that only this instance will use
+            tmp_class = type(f"_{name.capitalize()}Alias_" + cls.__name__, (cls,), {})
+            setattr(tmp_class, hash_key, instance_hash)
+            instance.__class__ = tmp_class
+            cls = tmp_class
+
+        self.__attach_class(cls, name, trample_ok=trample_ok)
+
+    def attach(
+        self,
+        owner: Any,
+        name: Optional[str] = None,
+        *,
+        trample_ok: Optional[bool] = None,
+    ) -> None:
+        if owner is None:
+            raise RuntimeError("cannot attach an alias to None")
+
+        name = name or self._name
+        if not name:
+            raise RuntimeError("must provide name to attach alias")
+
+        trample_ok = trample_ok if trample_ok is not None else self._trample_ok
+        if type(owner) is not type:
+            # we have to attach the descriptor to the class, not the instance
+            # this way we support both
+            self.__attach_instance(owner, name, trample_ok=trample_ok)
+        else:
+            self.__attach_class(owner, name, trample_ok=trample_ok)
 
 
 class aliased:
