@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Any, Union, Sequence
+from typing import List, Optional, Any, Union, Sequence, Iterable
 
 from .core import aliased
 from .error import TrampleAliasWarning, TrampleAliasError
@@ -83,18 +83,19 @@ class auto_alias:
 
         self._short = None
         self._short_indices = None
-        if isinstance(short, bool):
-            self._short = short
-        elif isinstance(short, (int, Sequence)):
-            # should convert a single int into list[int] and any sequence into a list
+        if isinstance(short, (Iterable)):
             self._short_indices = list(short)
+        elif isinstance(short, int):
+            self._short_indices = [short]
+        else:
+            self._short = bool(short)
 
     def _generate_short(self, name: str) -> list[str]:
         results: list[str] = []
-        if self._short_indices is not None:
-            pass
-        elif self._short is not None:
-            pass
+
+        for i in range(1, len(name)):
+            if self._short or i in self._short_indices:
+                results.append(name[:i])
 
         return results
 
