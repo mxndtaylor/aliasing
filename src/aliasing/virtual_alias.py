@@ -76,11 +76,11 @@ class valiases:
 
 class auto_alias:
     def __init__(
-            self,
-            *,
-            short: Optional[Union[int, Sequence[int], bool]] = None,
-            sub: Optional[Union[int, Sequence[int]]] = None,
-            trample_ok: Optional[List[str]] = None,
+        self,
+        *,
+        short: Optional[Union[int, Sequence[int], bool]] = None,
+        sub: Optional[Union[int, Sequence[int]]] = None,
+        trample_ok: Optional[List[str]] = None,
     ):
         self.trample_ok = trample_ok or []
 
@@ -100,11 +100,13 @@ class auto_alias:
             self._sub = list(range(1, int(sub) + 1))
 
     @classmethod
-    def _generate_substring(cls, name: str, *, indices: list[int], strip_underscores=False) -> list[str]:
-        results: list[str] = []
+    def _generate_substring(
+        cls, name: str, *, indices: List[int], strip_underscores=False
+    ) -> List[str]:
+        results: List[str] = []
 
         if strip_underscores and len(name) > 1:
-            name = name.lstrip('_')
+            name = name.lstrip("_")
 
         for i in range(1, len(name)):
             if i in indices:
@@ -112,16 +114,22 @@ class auto_alias:
 
         return results
 
-    def _generate_sub(self, name: str) -> list[str]:
+    def _generate_sub(self, name: str) -> List[str]:
         if not self._sub:
             return []
         return self._generate_substring(name, indices=self._sub)
 
-    def _generate_short(self, name: str) -> list[str]:
+    def _generate_short(self, name: str) -> List[str]:
         if not self._short and not self._short_indices:
             return []
-        indices = self._short_indices if not self._short else list(range(1, len(name) + 1))
-        return self._generate_substring(name, indices=indices, strip_underscores=True)
+        indices = (
+            self._short_indices
+            if self._short_indices
+            else list(range(1, len(name) + 1))
+        )
+        return self._generate_substring(
+            name, indices=indices, strip_underscores=True
+        )
 
     def __call__(self, func: Any) -> valiased:
         name = func.__name__
