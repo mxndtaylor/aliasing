@@ -68,7 +68,7 @@ class alias:
             move_p2 = not move_p2
         return p1
 
-    def __get__(self, owner: Any, owner_type: Any = None) -> Any:
+    def __get__(self, owner: Any, owner_type: Optional[Any] = None) -> Any:
         value = None
         if isinstance(
             self._get_alias_obj(owner, owner_type, self._for), alias
@@ -98,7 +98,9 @@ class alias:
             f"cannot set the value of read-only alias {self._name}"
         )
 
-    def __attach_class(self, cls: Type[Any], name: str, *, trample_ok: bool = None):
+    def __attach_class(
+        self, cls: Type[Any], name: str, *, trample_ok: Optional[bool] = None
+    ):
         if hasattr(cls, name):
             message = (
                 f"Owner class {cls.__name__}"
@@ -124,7 +126,9 @@ class alias:
         # or consumer child classes might add functionality to __set_name__
         self.__set_name__(cls, name)
 
-    def __attach_instance(self, instance: Any, name: str, *, trample_ok: bool = None):
+    def __attach_instance(
+        self, instance: Any, name: str, *, trample_ok: Optional[bool] = None
+    ):
         cls = type(instance)
 
         # hash and compare so we minimize the number of classes created here
@@ -135,19 +139,27 @@ class alias:
         if hasattr(cls, class_hash_key):
             class_hash = hash(cls.__base__)
 
-        if (not hasattr(cls, instance_hash_key)
-                or not hasattr(cls, class_hash_key)
-                or getattr(cls, instance_hash_key, None) != instance_hash
-                or getattr(cls, class_hash_key, None) != class_hash):
+        if (
+            not hasattr(cls, instance_hash_key)
+            or not hasattr(cls, class_hash_key)
+            or getattr(cls, instance_hash_key, None) != instance_hash
+            or getattr(cls, class_hash_key, None) != class_hash
+        ):
             # dynamically create a new class that only this instance will use
-            tmp_class = type(cls.__name__, (cls,), {
-                instance_hash_key: instance_hash,
-                class_hash_key: class_hash,
-            })
-            tmp_class.__doc__ = f""" class for aliasing '{self._for}' under `{self._name}`"""
+            tmp_class = type(
+                cls.__name__,
+                (cls,),
+                {
+                    instance_hash_key: instance_hash,
+                    class_hash_key: class_hash,
+                },
+            )
+            tmp_class.__doc__ = (
+                f""" class for aliasing '{self._for}' under `{self._name}`"""
+            )
             # I don't like modifying the class of the instance like this
-            # but as long as the end user is using 'isinstance' instead of direct class
-            # comparisons it should be okay.
+            # but as long as the end user is using 'isinstance'
+            # instead of direct class comparisons it should be okay.
             instance.__class__ = tmp_class
             cls = tmp_class
 
@@ -243,7 +255,7 @@ class aliased:
         self._init_doc = func.__doc__
         setattr(owner, self._private_name, func)
 
-    def __get__(self, owner: Any, owner_type: Any = None) -> Any:
+    def __get__(self, owner: Any, owner_type: Optional[Any] = None) -> Any:
         self._refresh_doc()
         if owner is None:
             try:
@@ -265,7 +277,10 @@ class aliased:
         return func
 
     def alias(
-        self, member: Any = None, *, trample_ok: Optional[bool] = None
+        self,
+        member: Optional[Any] = None,
+        *,
+        trample_ok: Optional[bool] = None,
     ) -> alias:
         name: Optional[str]
         if member is None:
