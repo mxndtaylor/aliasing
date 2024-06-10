@@ -1,6 +1,6 @@
 [project]
 name = "aliasing"
-version = "0.3.1"
+version = "0.4.2"
 description = "A utility for duplicating class members to other names or \"aliases\""
 authors = [
     { name = "mxt", email = "mxnd.taylor@gmail.com" },
