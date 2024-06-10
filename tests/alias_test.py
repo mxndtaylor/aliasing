@@ -59,16 +59,59 @@ def test_alias_doc():
     assert alias_test_cls.my_alias.__doc__ == f"Alias for {PROP_NAME}"
 
 
-def test_alias_attach():
+def test_alias_attach_to_instance():
     class AliasAttachTest:
         def __init__(self):
             self.prop: str = "anything"
 
+    alias_test1 = AliasAttachTest()
+    alias_test2 = AliasAttachTest()
+    alias_name = "my_attached_alias"
+    my_alias = alias(PROP_NAME, alias_name=alias_name)
+    my_alias.attach(alias_test1)
+    assert hasattr(alias_test1, alias_name) and getattr(alias_test1, alias_name) == alias_test1.prop
+    assert isinstance(alias_test1, AliasAttachTest)
+    assert not hasattr(AliasAttachTest, alias_name) and my_alias not in AliasAttachTest.__dict__.values()
+    assert not hasattr(alias_test2, alias_name)
+
+
+def test_alias_attach_to_class_non_isolated():
+    class AliasAttachTest:
+        def __init__(self):
+            self.prop: str = "anything"
+
+    alias_test1 = AliasAttachTest()
+    alias_test2 = AliasAttachTest()
+    alias_name = "my_attached_alias"
+    my_alias = alias(PROP_NAME, alias_name=alias_name)
+    my_alias.attach(AliasAttachTest)
+    assert hasattr(alias_test1, alias_name) and getattr(alias_test1, alias_name) == alias_test1.prop
+    assert hasattr(alias_test2, alias_name) and getattr(alias_test2, alias_name) == alias_test2.prop
+    assert alias_test1.__class__ == AliasAttachTest and alias_test2.__class__ == AliasAttachTest
+    assert hasattr(AliasAttachTest, alias_name) and my_alias in AliasAttachTest.__dict__.values()
+
+
+def test_alias_attach_to_instance_no_second_dynamic_class():
+    """
+    given instance object of class A "a"
+    when attach alias to "a"
+    then "a" has dynamically generated class
+    when attach 2nd alias to "a"
+    then "a" should still have original dynamically generated class
+    """
+    class AliasAttachTest:
+        pass
+
     alias_test = AliasAttachTest()
-    my_alias = alias(PROP_NAME, alias_name="my_attached_alias")
-    my_alias.attach(alias_test)
-    assert getattr(alias_test, "my_attached_alias") == alias_test.prop
-    assert my_alias in AliasAttachTest.__dict__.values()
+    aka1 = alias(PROP_NAME, "name1")
+    aka2 = alias(PROP_NAME, "name2")
+    aka1.attach(alias_test)
+    first_dynamic_class = type(alias_test)
+    aka2.attach(alias_test)
+    second_dynamic_class = type(alias_test)
+
+    assert first_dynamic_class is second_dynamic_class
+    assert AliasAttachTest is not first_dynamic_class
 
 
 def test_alias_attach_err():
@@ -94,6 +137,14 @@ def test_alias_attach_name_on_attach():
     my_alias = alias(PROP_NAME)
     my_alias.attach(alias_test, "my_second_attached_alias")
     assert getattr(alias_test, "my_second_attached_alias") == alias_test.prop
+
+
+def test_alias_attach_no_owner_err():
+    my_alias = alias(PROP_NAME)
+    with pytest.raises(RuntimeError) as exc_info:
+        my_alias.attach(None)
+
+    assert exc_info.value.args[0] == "cannot attach alias to None"
 
 
 def test_alias_trample_on_attach_err():

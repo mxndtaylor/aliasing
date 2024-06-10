@@ -61,7 +61,12 @@ test-report = "pytest --junitxml=reports/junit/junit.xml --html=reports/junit/re
 regression = "tox -e 'py38,py39,py310,py311,py312' --parallel"
 fmt = "black {args:src/}"
 lint = "flake8 {args:src/}"
-typing = "mypy {args:src/}"
+
+[tool.pdm.scripts.typing]
+composite = [
+    "no_implicit_optional {args:src/}",
+    "mypy {args:src/}",
+]
 
 [tool.pdm.scripts.badges-timestamp]
 shell = "date -u > badges/timestamp.txt"
@@ -122,6 +127,7 @@ dev = [
     "flake8>=5.0.4",
     "pytest-html>=4.1.1",
     "mypy>=1.10.0",
+    "no-implicit-optional>=1.4",
 ]
 
 [tool.coverage.run]

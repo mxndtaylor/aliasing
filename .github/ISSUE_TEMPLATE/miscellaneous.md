@@ -2,7 +2,8 @@
 name: Miscellaneous
 about: For anything else
 title: ''
-labels: ''
+labels: 
+  - other
 assignees: ''
 
 ---
