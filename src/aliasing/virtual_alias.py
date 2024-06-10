@@ -1,3 +1,4 @@
+import itertools
 import warnings
 from typing import List, Optional, Any, Union, Sequence, Iterable
 
@@ -77,6 +78,7 @@ class auto_alias:
             self,
             *,
             short: Optional[Union[int, Sequence[int], bool]] = None,
+            sub: Optional[Union[int, Sequence[int]]] = None,
             trample_ok: Optional[List[str]] = None,
     ):
         self.trample_ok = trample_ok or []
@@ -90,16 +92,40 @@ class auto_alias:
         else:
             self._short = bool(short)
 
-    def _generate_short(self, name: str) -> list[str]:
+        self._sub = None
+        if isinstance(sub, Iterable):
+            self._sub = list(sub)
+        elif isinstance(sub, int):
+            self._sub = list(range(1, int(sub) + 1))
+
+    @classmethod
+    def _generate_substring(cls, name: str, *, indices: list[int], strip_underscores=False) -> list[str]:
         results: list[str] = []
 
-        for i in range(1, len(name)):
-            if self._short or i in self._short_indices:
+        if strip_underscores and len(name) > 1:
+            name = name.lstrip('_')
+
+        for i in range(1, len(name) + 1):
+            if i in indices:
                 results.append(name[:i])
 
         return results
 
+    def _generate_sub(self, name: str) -> list[str]:
+        if not self._sub:
+            return []
+        return self._generate_substring(name, indices=self._sub)
+
+    def _generate_short(self, name: str) -> list[str]:
+        if not self._short and not self._short_indices:
+            return []
+        indices = self._short_indices if not self._short else list(range(1, len(name) + 1))
+        return self._generate_substring(name, indices=indices, strip_underscores=True)
+
     def __call__(self, func: Any) -> valiased:
         name = func.__name__
-        aliases = self._generate_short(name=name)
+        aliases = itertools.chain(
+            self._generate_short(name=name),
+            self._generate_sub(name=name),
+        )
         return valiased(func, *aliases, trample_ok=self.trample_ok)
