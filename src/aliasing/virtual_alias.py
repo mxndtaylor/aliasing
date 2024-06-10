@@ -27,6 +27,7 @@ class valiased(aliased):
         )
 
     def __set_name__(self, owner: Any, name: str) -> None:
+        print(owner, name)
         super().__set_name__(owner, name)
         is_warn = is_err = False
         msg = ""
@@ -105,7 +106,7 @@ class auto_alias:
         if strip_underscores and len(name) > 1:
             name = name.lstrip('_')
 
-        for i in range(1, len(name) + 1):
+        for i in range(1, len(name)):
             if i in indices:
                 results.append(name[:i])
 
