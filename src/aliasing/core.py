@@ -155,7 +155,7 @@ class alias:
                 },
             )
             tmp_class.__doc__ = (
-                f""" class for aliasing '{self._for}' under `{self._name}`"""
+                f""" class for aliasing '{self._for}' under '{self._name}'"""
             )
             # I don't like modifying the class of the instance like this
             # but as long as the end user is using 'isinstance'
