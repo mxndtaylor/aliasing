@@ -1,6 +1,6 @@
 [project]
 name = "aliasing"
-version = "0.4.2"
+version = "0.5.0"
 description = "A utility for duplicating class members to other names or \"aliases\""
 authors = [
     { name = "mxt", email = "mxnd.taylor@gmail.com" },
@@ -29,9 +29,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/mxndtaylor/aliasing"
-#Documentation = "https://mxndtaylor.github.io/aliasing"
 Source = "https://github.com/mxndtaylor/aliasing"
-#Changelog = "https://mxndtaylor.github.io/aliasing/changelog"
 
 [project.license]
 text = "MIT"

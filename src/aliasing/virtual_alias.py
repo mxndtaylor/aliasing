@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union, Sequence
 
 from .core import aliased
 from .error import TrampleAliasWarning, TrampleAliasError
@@ -70,3 +70,35 @@ class valiases:
 
     def __call__(self, func: Any) -> valiased:
         return valiased(func, *self._aliases, trample_ok=self._trample_ok)
+
+
+class auto_alias:
+    def __init__(
+            self,
+            *,
+            short: Optional[Union[int, Sequence[int], bool]] = None,
+            trample_ok: Optional[List[str]] = None,
+    ):
+        self.trample_ok = trample_ok or []
+
+        self._short = None
+        self._short_indices = None
+        if isinstance(short, bool):
+            self._short = short
+        elif isinstance(short, (int, Sequence)):
+            # should convert a single int into list[int] and any sequence into a list
+            self._short_indices = list(short)
+
+    def _generate_short(self, name: str) -> list[str]:
+        results: list[str] = []
+        if self._short_indices is not None:
+            pass
+        elif self._short is not None:
+            pass
+
+        return results
+
+    def __call__(self, func: Any) -> valiased:
+        name = func.__name__
+        aliases = self._generate_short(name=name)
+        return valiased(func, *aliases, trample_ok=self.trample_ok)
