@@ -85,8 +85,8 @@ class auto_alias:
         self._short_indices = None
         if isinstance(short, Iterable):
             self._short_indices = list(short)
-        elif isinstance(short, int):
-            self._short_indices = [short]
+        elif isinstance(short, int) and not isinstance(short, bool):
+            self._short_indices = list(range(1, short + 1))
         else:
             self._short = bool(short)
 
