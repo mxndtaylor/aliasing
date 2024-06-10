@@ -83,7 +83,7 @@ class auto_alias:
 
         self._short = None
         self._short_indices = None
-        if isinstance(short, (Iterable)):
+        if isinstance(short, Iterable):
             self._short_indices = list(short)
         elif isinstance(short, int):
             self._short_indices = [short]
