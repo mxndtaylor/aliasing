@@ -112,12 +112,12 @@ def test_auto_alias_short_int():
             return val
 
         @auto_alias(short=2)
-        def proc(self):
+        def _proc(self):
             return val + val
 
     tester = AutoAliasTest()
     assert val == tester.method()
-    assert val + val == tester.proc()
+    assert val + val == tester._proc()
 
     agg = ''
     for char in 'met':
@@ -128,8 +128,8 @@ def test_auto_alias_short_int():
     agg = ''
     for char in 'pr':
         agg += char
-        assert tester.proc.__code__ is getattr(tester, agg).__code__
-        assert tester.proc() == getattr(tester, agg)()
+        assert tester._proc.__code__ is getattr(tester, agg).__code__
+        assert tester._proc() == getattr(tester, agg)()
 
 
 def test_auto_alias_short_list_ints():
@@ -137,7 +137,7 @@ def test_auto_alias_short_list_ints():
 
     class AutoAliasTest:
         @auto_alias(short=[1, 4])
-        def method(self):
+        def _method(self):
             return val
 
         @auto_alias(short=[2, 3])
@@ -145,12 +145,66 @@ def test_auto_alias_short_list_ints():
             return val + val
 
     tester = AutoAliasTest()
-    assert val == tester.method()
+    assert val == tester._method()
     assert val + val == tester.proc()
 
     for agg in 'm', 'meth':
+        assert tester._method.__code__ is getattr(tester, agg).__code__
+        assert tester._method() == getattr(tester, agg)()
+
+    for agg in 'pr', 'pro':
+        assert tester.proc.__code__ is getattr(tester, agg).__code__
+        assert tester.proc() == getattr(tester, agg)()
+
+
+def test_auto_alias_sub_int():
+    val = "my testing val 123"
+
+    class AutoAliasTest:
+        @auto_alias(sub=3)
+        def method(self):
+            return val
+
+        @auto_alias(sub=2)
+        def _proc(self):
+            return val + val
+
+    tester = AutoAliasTest()
+    assert val == tester.method()
+    assert val + val == tester._proc()
+
+    agg = ''
+    for char in 'met':
+        agg += char
         assert tester.method.__code__ is getattr(tester, agg).__code__
         assert tester.method() == getattr(tester, agg)()
+
+    agg = ''
+    for char in '_p':
+        agg += char
+        assert tester._proc.__code__ is getattr(tester, agg).__code__
+        assert tester._proc() == getattr(tester, agg)()
+
+
+def test_auto_alias_sub_list_ints():
+    val = "my testing val 123"
+
+    class AutoAliasTest:
+        @auto_alias(sub=[1, 4])
+        def _method(self):
+            return val
+
+        @auto_alias(sub=[2, 3])
+        def proc(self):
+            return val + val
+
+    tester = AutoAliasTest()
+    assert val == tester._method()
+    assert val + val == tester.proc()
+
+    for agg in '_', '_met':
+        assert tester._method.__code__ is getattr(tester, agg).__code__
+        assert tester._method() == getattr(tester, agg)()
 
     for agg in 'pr', 'pro':
         assert tester.proc.__code__ is getattr(tester, agg).__code__
