@@ -2,7 +2,7 @@ import warnings
 
 import pytest
 
-from aliasing import TrampleAliasWarning, TrampleAliasError, valiases
+from aliasing import TrampleAliasWarning, TrampleAliasError, valiases, auto_alias
 
 
 class VirtualAliasTest:
@@ -83,3 +83,76 @@ def test_valias_trample_err():
         " method1 by default, pass `trample_ok=['method2']` to override "
         "the member anyway."
     )
+
+
+def test_auto_alias_short_bool():
+    val = "my testing val 123"
+
+    class AutoAliasTest:
+        @auto_alias(short=True)
+        def method(self):
+            return val
+
+    tester = AutoAliasTest()
+    assert val == tester.method()
+
+    agg = ''
+    for char in 'method':
+        agg += char
+        assert tester.method.__code__ is getattr(tester, agg).__code__
+        assert tester.method() == getattr(tester, agg)()
+
+
+def test_auto_alias_short_int():
+    val = "my testing val 123"
+
+    class AutoAliasTest:
+        @auto_alias(short=3)
+        def method(self):
+            return val
+
+        @auto_alias(short=2)
+        def proc(self):
+            return val + val
+
+    tester = AutoAliasTest()
+    assert val == tester.method()
+    assert val + val == tester.proc()
+
+    agg = ''
+    for char in 'met':
+        agg += char
+        assert tester.method.__code__ is getattr(tester, agg).__code__
+        assert tester.method() == getattr(tester, agg)()
+
+    agg = ''
+    for char in 'pr':
+        agg += char
+        assert tester.proc.__code__ is getattr(tester, agg).__code__
+        assert tester.proc() == getattr(tester, agg)()
+
+
+def test_auto_alias_short_list_ints():
+    val = "my testing val 123"
+
+    class AutoAliasTest:
+        @auto_alias(short=[1, 4])
+        def method(self):
+            return val
+
+        @auto_alias(short=[2, 3])
+        def proc(self):
+            return val + val
+
+    tester = AutoAliasTest()
+    assert val == tester.method()
+    assert val + val == tester.proc()
+
+    for agg in 'm', 'meth':
+        assert tester.method.__code__ is getattr(tester, agg).__code__
+        assert tester.method() == getattr(tester, agg)()
+
+    for agg in 'pr', 'pro':
+        assert tester.proc.__code__ is getattr(tester, agg).__code__
+        assert tester.proc() == getattr(tester, agg)()
+
